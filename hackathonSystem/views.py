@@ -212,7 +212,7 @@ def edit_information(request):
 
     teamInformation.formFor = "Edit Team Information"
 
-    return render(request, 'form_template.html', context={'form': teamInformation})
+    return render(request, 'form_template_slim.html', context={'form': teamInformation})
 
 
 @login_required
@@ -267,7 +267,7 @@ def create_team(request):
     form = createTeamRequest
     form.action = str(reverse('create_team'))
     form.formFor = 'Create Team'
-    return render(request, 'form_template.html', context={'form': form})
+    return render(request, 'form_template_slim.html', context={'form': form})
 
 @user_passes_test(checkIfAdmin)
 def close_request(request, requestID):
