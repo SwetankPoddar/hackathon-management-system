@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title_block %}
+Request #{{requestInfo.id}}
+{% endblock %}
+
+{% block body_title %}
+Request #{{requestInfo.id}}
+{% endblock %}
+
+
+{% block body_block %}
+
+<div class="container text-center">
+
+  <table class="table">
+      <tr>
+        <td>Challenge</td>
+        <td><a href="{% url 'challenge_details' requestInfo.challenge.id %}">{{ requestInfo.challenge }} </a></td>
+      </tr>
+      <tr>
+        <td>Points Avaliable</td>
+        <td>{{ requestInfo.challenge.points_avaliable }}</td>
+      </tr>
+      <tr>
+        <td>Made at</td>
+        <td>{{ requestInfo.made_at }}</td>
+      </tr>
+      <tr>
+        <td>Status</td>
+        <td><b>{{ requestInfo.get_status_display }}</b></td>
+      </tr>
+      <tr>
+        <td>Points Gained</td>
+        <td>
+            {% if requestInfo.status == "judged" %}
+            <b>{{ requestInfo.points_gained }}</b>
+            {% else %}
+            -
+            {% endif %}
+          </td>
+      </tr>
+      <tr>
+        <td>Notes</td>
+        <td>{% if requestInfo.notes %}
+          {{ requestInfo.notes }}
+          {% else %}
+          -
+          {% endif %}
+        </td>
+      </tr>
+      {% if requestInfo.status == "judged" %}
+      <tr>
+        <td>Judged By</td>
+        <td>{{ requestInfo.closed_by.user.first_name|title }} {{ requestInfo.closed_by.user.last_name|title }}</td>
+      </tr>
+      {% endif %}
+  </table>
+
+</div>
+
+
+{% endblock %}

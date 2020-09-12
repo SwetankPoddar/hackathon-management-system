@@ -1,0 +1,14 @@
+<tr>
+  <th>Request ID</th>
+  <th>Submitted at</th>
+  <th>Team Name (Number)</th>
+  <th>Challenge</th>
+</tr>
+{% for request in request_array %}
+  <tr>
+    <td><a href="{% url 'close_request' request.id %}">{{ request.id }}</a> </td>
+    <td>{{ request.made_at }} </td>
+    <td>{{ request.team }} ({{ request.team.user.id }}) </td>
+    <td><a href="{% url 'challenge_details' request.challenge.id %}">{{ request.challenge }}</a></td>
+  </tr>
+{% endfor %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title_block %}
+Judgment List
+{% endblock %}
+
+{% block body_title %}
+Judgment List
+{% endblock %}
+
+{% block body_block %}
+
+
+<div class="container text-center">
+
+  <table class="table sortable">
+      <tr>
+        <th>Request ID</th>
+        <th>Team</th>
+        <th>Challenge</th>
+        <th>Time</th>
+        <th>Points Awarded</th>
+        <th>Status</th>
+      </tr>
+
+      {% for judgement in judgement_array %}
+        <tr>
+          <td><a href="{% url 'request_details' judgement.id  %}">{{ judgement.id }}</a> </td>
+          <td>{{ judgement.team }} </td>
+          <td><a href="{% url 'challenge_details' judgement.challenge.id %}">{{ judgement.challenge }}</a></td>
+          <td>{{ judgement.made_at }} </td>
+          <td>
+          {% if judgement.status == "judged" %}
+          {{ judgement.points_gained }}
+          {% else %}
+          -
+          {% endif %}
+        </td>
+          <td>{{ judgement.get_status_display }}</td>
+        </tr>
+      {% endfor %}
+  </table>
+
+</div>
+
+
+{% endblock %}

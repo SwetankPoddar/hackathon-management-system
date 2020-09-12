@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title_block %}
+Open Requests List
+{% endblock %}
+
+{% block body_title %}
+Open Requests List
+{% endblock %}
+
+{% block body_block %}
+
+
+<div class="container text-center">
+
+  <table class="table sortable">
+      <tr>
+        <th>Request ID</th>
+        <th>Submitted at</th>
+        <th>Team Name (Number)</th>
+        <th>Challenge</th>
+      </tr>
+      {% for request in request_array %}
+        <tr>
+          <td><a href="{% url 'close_request' request.id %}">{{ request.id }}</a> </td>
+          <td>{{ request.made_at }} </td>
+          <td>{{ request.team }} ({{ request.team.user.id }}) </td>
+          <td><a href="{% url 'challenge_details' request.challenge.id %}">{{ request.challenge }}</a></td>
+        </tr>
+      {% endfor %}
+  </table>
+
+</div>
+
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+  $(document).ready(function () {
+    setInterval(function () {
+      $.ajax({
+        url: "{% url 'request_list' %}",
+        type: "get",
+        cache: true,
+        success: function (data) {
+                console.log("success");
+                $('#table').html(data.rendered_table);
+                },
+        error: function (data) {
+              alert(console.trace + data);
+              }
+      });
+    }, 15000);
+});
+</script>
+{% endblock %}

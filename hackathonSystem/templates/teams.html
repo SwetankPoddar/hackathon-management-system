@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title_block %}
+Teams
+{% endblock %}
+
+{% block body_title %}
+Teams
+{% endblock %}
+
+{% block body_block %}
+
+
+<div class="container text-center">
+
+  <table class="table sortable">
+    <tr>
+      <th>Team Number</th>
+      <th>Team Name</th>
+      <th>Points</th>
+      <th>Completely Solved</th>
+      <th>Partially Solved</th>
+      <th>View More</th>
+    </tr>
+      {% for team in team_array %}
+        <tr>
+          <td>{{ team.user.id }}</a> </td>
+          <td>{{ team.name }} </td>
+          <td>{{ team.information.points }} </td>
+          <td>{{ team.information.challenges_completed }}</td>
+          <td>{{ team.information.partially_completed }}</td>
+          <td><a href="{% url 'team_information' team.user.id %}">View More</a></td>
+        </tr>
+      {% endfor %}
+  </table>
+
+</div>
+
+
+{% endblock %}

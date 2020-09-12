@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title_block %}
+{% if challenge %}
+Challenge - {{ challenge.name }}
+{% endif %}
+{% endblock %}
+
+{% block body_title %}
+{% if challenge %}
+Challenge - {{ challenge.name }}
+{% endif %}
+{% endblock %}
+
+{% block body_block %}
+<div class="container text-center">
+
+  {% if challenge %}
+    <table class="table">
+        <tr>
+          <td>Challenge Number</td>
+          <td>{{ challenge.id }}</td>
+        </tr>
+        <tr>
+          <td>Challenge Name</td>
+          <td>{{ challenge.name }}</td>
+        </tr>
+        <tr>
+          <td>Points Avaliable</td>
+          <td>{{ challenge.points_avaliable }}</td>
+        </tr>
+        {% if request.session.user_type == "team" %}
+        <tr>
+          <td>Points Gained (so far)</td>
+          <td>{{ points_gained }}</td>
+        </tr>
+        <tr>
+          <td>Status</td>
+          <td><b>{{ status }}</b> {% if request_id %} (<a href="{% url 'request_details' request_id %}">More Information</a>) {% endif %}</td>
+        </tr>
+        {% endif %}
+        <tr>
+          <td>Detailed Description</td>
+          <td>{{ challenge.description }}</td>
+        </tr>
+    </table>
+  {% endif %}
+
+
+
+</div>
+
+
+{% endblock %}

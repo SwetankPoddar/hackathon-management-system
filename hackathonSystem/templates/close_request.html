@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title_block %}
+Request #{{ requestDetails.id }} by team {{ requestDetails.team }}
+{% endblock %}
+
+{% block body_title %}
+Request #{{ requestDetails.id }} by team {{ requestDetails.team }}
+{% endblock %}
+
+{% block body_block %}
+<div class="container text-center">
+
+  <table class="table">
+      <tr>
+          <td>Team</td>
+          <td>{{ requestDetails.team }} ( {{ requestDetails.team.user.id }} ) </td>
+      </tr>
+      <tr>
+          <td>Question</td>
+          <td><a href="{% url 'challenge_details' requestDetails.challenge.id %}">{{ requestDetails.challenge }}</a></td>
+      </tr>
+      {% if requestDetails.notes %}
+      <tr>
+          <td>Notes</td>
+          <td> {{ requestDetails.notes }}</td>
+      </tr>
+      {% endif %}
+  </table>
+  <hr>
+  <form method="POST" action="{% url 'close_request' requestDetails.id %}">
+          {% csrf_token %}
+          <span class="text-center">Max Points: <b>{{ requestDetails.challenge.points_avaliable }}</b></span>
+          <br>
+          {{ form }}
+          <br>
+          <input type="submit" name="submit" value="Close Request">
+  </form>
+
+
+
+</div>
+
+
+{% endblock %}

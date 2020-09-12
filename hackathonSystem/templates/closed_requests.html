@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title_block %}
+Closed Requests
+{% endblock %}
+
+{% block body_title %}
+Closed Requests
+{% endblock %}
+
+{% block body_block %}
+
+<div class="container text-center">
+
+  <table class="table sortable">
+      <tr>
+        <th>Request ID</th>
+        <th>Submitted at</th>
+        <th>Team Name (Number)</th>
+        <th>Challenge</th>
+        <th>Delete</th>
+      </tr>
+      {% for request in requests %}
+        <tr>
+          <td><a href="{% url 'request_details' request.id %}">{{ request.id }}</a> </td>
+          <td>{{ request.made_at }} </td>
+          <td>{{ request.team }} ({{ request.team.user.id }}) </td>
+          <td><a href="{% url 'challenge_details' request.challenge.id %}">{{ request.challenge }}</a></td>
+          <td><a href="{% url 'delete_request' request.id %}">Delete</a></td>
+        </tr>
+      {% endfor %}
+  </table>
+  <div class="pagination">
+  <span class="step-links text-center">
+      {% if requests.has_previous %}
+          <a href="?page=1">&laquo; First</a> |
+          <a href="?page={{ requests.previous_page_number }}">Previous</a>
+      {% endif %}
+
+      <span class="current">
+          | Page {{ requests.number }} of {{ requests.paginator.num_pages }} |
+      </span>
+
+      {% if requests.has_next %}
+          <a href="?page={{ requests.next_page_number }}">Next</a> |
+          <a href="?page={{ requests.paginator.num_pages }}">Last &raquo;</a>
+      {% endif %}
+  </span>
+  </div>
+
+</div>
+
+
+{% endblock %}

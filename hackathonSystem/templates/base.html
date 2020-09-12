@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+	<head>
+
+        <title>
+					HO2019 -
+					{% block title_block %}
+						Hacker Olympics
+					{% endblock %}
+				</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+		<link href="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.css" rel="stylesheet">
+		<script src="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
+
+
+		<!-- Head Part -->
+  	{% block extra_head %}
+  	{% endblock %}
+
+	</head>
+	<body>
+
+        <!--Navbar-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
+          <a class="navbar-brand" href="/">
+						<img src="{% static 'images/co-logo.jpg' %}" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+						<strong>Hacker Olympics</strong>
+					</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <!-- main links -->
+            <ul class="navbar-nav mr-auto">
+              {% if request.session.user_type %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'challenge_list' %}">
+                  Challenges
+                </a>
+              </li>
+              {% endif %}
+              {% if request.session.user_type == "team" %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'judged_list' %}">
+                  Judgements
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'create_request' %}">
+                  Create new request
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'edit_information' %}">
+                  Edit Team Information
+                </a>
+              </li>
+              {% endif %}
+              {% if request.session.user_type == "admin" %}
+						  <li class="nav-item">
+							 <a class="nav-link" href="{% url 'teams' %}">
+								 Teams
+							 </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'request_list' %}">
+                  Open Requests
+                </a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'closed_requests' %}">
+                    Closed Requests
+                  </a>
+                </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'create_challenge' %}">
+                    Create New Challenge
+                  </a>
+                </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'create_team' %}">
+                  Create New Team
+                </a>
+              </li>
+              {% endif %}
+              {% if request.session.user_type %}
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'logout_request' %}">
+                    Logout
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+        </nav>
+
+
+
+				<div class="container">
+					<!-- cart pop up messages -->
+					<div class="row justify-content-md-center">
+						<div class="col">
+							{% if messages %}
+							{% for message in messages %}
+							<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+								<strong>{{ message }}</strong>
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							{% endfor %}
+							{% endif %}
+						</div>
+					</div>
+				</div>
+        <h3 class="text-center">{% block body_title %}{% endblock %}</h3>
+        {% block body_block %}
+        {% endblock %}
+    </body>
+    <footer class="footer">
+      <div class="container text-center">
+        <span class="text-muted"> 
+          All rights reserved by GUTS | Made with &#x2764; by <a href='http://www.swetankpoddar.me'>Swetank Poddar</a>
+        </span>
+      </div>
+    </footer>
+</html>
+
+{% block javascript %}
+{% endblock %}
+

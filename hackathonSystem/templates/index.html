@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title_block %}
+Home
+{% endblock %}
+
+{% block body_block %}
+
+<div class="container text-center">
+
+  <div class="row justify-content-md-center">
+    <div class="col col-lg-4 my-5">
+      <img src="{% static 'images/co-logo.jpg'%}" class="img-fluid" alt="Code Oympics Logo">
+    </div>
+  </div>
+
+
+
+  {% if user.is_authenticated %}
+  <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    Hey <strong>{% if team %} {{ team.name |title }}  {% else %} {{ user.first_name|title }} {{ user.last_name|title}} {% endif %}</strong>, Welcome to Hacker Olympics!
+
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+
+
+    </button>
+  </div>
+
+  <!-- <div class="jumbotron">
+      <img class="img-fluid"  src='{% static "images/logo.jpg" %}'>
+      <hr>
+          <a href='https://www.hackerrank.com/hacker-olympics-2019'>HackerRank - Hacker Olympics 2019</a>
+      <hr>
+  </div> -->
+
+  {% else %}
+  <div class="container">
+  <div class="row justify-content-md-center">
+    <div class="col col-lg-4 ">
+      <form method="POST" action="{% url 'login_request' %}">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <input class="btn btn-success" type="submit" name="submit" value="Login">
+      </form>
+    </div>
+  </div>
+</div>
+  {% endif %}
+
+</div>
+
+
+
+<script type="text/javascript">
+
+$(document).ready(function () {
+
+  window.setTimeout(function() {
+    $(".alert").fadeTo(1000, 0).slideUp(1000, function(){
+      $(this).remove();
+    });
+  }, 1000);
+  6
+});
+</script>
+
+{% endblock %}
