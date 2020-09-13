@@ -243,7 +243,7 @@ def create_challenge(request):
 
     newChallenge.action = str(reverse('create_challenge'))
     newChallenge.formFor = 'Create Challenge'
-    return render(request, 'form_template.html', context={'form': newChallenge})
+    return render(request, 'form_template_challenge.html', context={'form': newChallenge})
 
 @user_passes_test(checkIfAdmin)
 def create_team(request):
