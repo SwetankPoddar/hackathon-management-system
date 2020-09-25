@@ -31,7 +31,7 @@
 	<body>
 
         <!--Navbar-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-light mb-5">
           <a class="navbar-brand" href="/">
 						<img src="{% static 'images/co-logo.jpg' %}" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
 						<strong>Hacker Olympics</strong>
@@ -126,16 +126,20 @@
         <h3 class="text-center">{% block body_title %}{% endblock %}</h3>
         {% block body_block %}
         {% endblock %}
+
+
+
+				<footer class="footer">
+					<div class="container text-center">
+						<span class="text-muted">
+							All rights reserved by GUTS | Made with &#x2764; by <a href='http://www.swetankpoddar.me'>Swetank Poddar</a>
+						</span>
+					</div>
+				</footer>
+
+				{% block javascript %}
+				{% endblock %}
+
+
     </body>
-    <footer class="footer">
-      <div class="container text-center">
-        <span class="text-muted"> 
-          All rights reserved by GUTS | Made with &#x2764; by <a href='http://www.swetankpoddar.me'>Swetank Poddar</a>
-        </span>
-      </div>
-    </footer>
 </html>
-
-{% block javascript %}
-{% endblock %}
-

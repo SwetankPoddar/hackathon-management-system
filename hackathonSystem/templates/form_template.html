@@ -10,12 +10,12 @@
 
 {% block body_block %}
 
-<div class="container text-center">
+<div class="container text-center ">
 
 
   <div class="container mt-5">
   <div class="row justify-content-md-center">
-    <div class="col col-lg-{% if col_size %}{{ col_size }}{% else %}12{% endif %}">
+    <div class="col col-lg{% if col_size %}-{{ col_size }}{% else %}{% endif %}">
       <form method="POST" action="{{ form.action }}">
           {% csrf_token %}
 

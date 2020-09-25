@@ -212,7 +212,7 @@ def edit_information(request):
 
     teamInformation.formFor = "Edit Team Information"
 
-    return render(request, 'form_template.html', context={'form': teamInformation})
+    return render(request, 'form_template.html', context={'form': teamInformation,'col_size':'8'})
 
 
 @login_required
@@ -243,7 +243,7 @@ def create_challenge(request):
 
     newChallenge.action = str(reverse('create_challenge'))
     newChallenge.formFor = 'Create Challenge'
-    return render(request, 'form_template.html', context={'form': newChallenge})
+    return render(request, 'form_template_challenge.html', context={'form': newChallenge})
 
 @user_passes_test(checkIfAdmin)
 def create_team(request):
@@ -267,7 +267,7 @@ def create_team(request):
     form = createTeamRequest
     form.action = str(reverse('create_team'))
     form.formFor = 'Create Team'
-    return render(request, 'form_template.html', context={'form': form})
+    return render(request, 'form_template.html', context={'form': form,'col_size':'4'})
 
 @user_passes_test(checkIfAdmin)
 def close_request(request, requestID):
