@@ -1,5 +1,5 @@
 from django.shortcuts import render, reverse, redirect
-from .models import Challenge, RequestsMade, Team, CustomUser
+from .models import Challenge, RequestsMade, Team, CustomUser, Category
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout,authenticate,login
 from django.contrib.auth.decorators import user_passes_test
@@ -76,18 +76,19 @@ def index(request):
         return render(request, 'index.html', context={'form': form} )
 
 
-def challenge_cat_list(request):
-    categories = Challenge.get.CATEGORY_CHOICES()
-    context_dict = {
-        'categories':categories,
-    }
+@login_required
+def category_list(request):
+    challenges = Category.objects.all()
+    team = getTeam(request)
+    details = calculateInformation(team)
 
-    return render(request, 'test.html', context=context_dict)
+    context_dict={'category_array': challenges, 'details': details}
 
+    return render(request, 'category_list.html', context=context_dict)
 
 @login_required
-def challenge_list(request):
-    challenges = Challenge.objects.all()
+def challenge_list(request, category_id):
+    challenges = Challenge.objects.filter(category = category_id)
     team = getTeam(request)
     details = calculateInformation(team)
     if team:
@@ -101,6 +102,8 @@ def challenge_list(request):
     context_dict={'challenge_array': challenges, 'details': details}
 
     return render(request, 'challenge_list.html', context=context_dict)
+
+
 
 @login_required
 def challenge_details(request,challenge_id):

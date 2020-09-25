@@ -11,8 +11,11 @@ urlpatterns = [
     # Logout
     path('logout/', views.logout_request, name="logout_request"),
 
+    # Show all categories Page
+    path('category_list/', views.category_list, name='category_list'),
+
     # Show all challenge Page
-    path('challenge_list/', views.challenge_list, name='challenge_list'),
+    path('challenge_list/<int:category_id>/', views.challenge_list, name='challenge_list'),
 
     # More information on challenge Page
     path('challenge/<int:challenge_id>/', views.challenge_details, name='challenge_details'),

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title_block %}
+Challenge Categories
+{% endblock %}
+
+{% block body_title %}
+Challenge Categories
+{% if request.session.user_type == "team" %} <br> <span style="font-size: 0.4em;">| Points Gained: {{details.points}} | Challenge  Completed: {{ details.challenges_completed }} | Challenges Partialy Completed: {{ details.partially_completed }} | </span>{% endif %}
+{% endblock %}
+
+
+{% block body_block %}
+<div class="container text-center">
+  {% for category in category_array %}
+    <div class='category-item'>
+        <a href="{% url 'challenge_list' category.id %}">{{category.name}}</a>
+    </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
