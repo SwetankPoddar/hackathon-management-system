@@ -19,7 +19,7 @@ class CustomUser(models.Model):
             return "Team"
         else:
             return "Judge"
-    
+
     def __str__(self):
         return str(self.user.id) + ' - ' + self.getType()
 
@@ -33,11 +33,24 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        verbose_name_plural = 'Categories'
+
+    def __str__(self):
+        return self.name
+
+
 # Challenge Model
 class Challenge(models.Model):
     name = models.CharField(max_length = 50)
     points_avaliable = models.IntegerField()
     description = models.TextField(max_length = 350)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -63,7 +76,7 @@ class RequestsMade(models.Model):
     made_at = models.DateTimeField(default = datetime.now, blank = True)
 
     notes = models.TextField(default='', blank = True, max_length = 250 )
- 
+
     closed_by = models.ForeignKey(CustomUser, on_delete = models.SET_NULL, blank = True, null = True )
 
     def __str__(self):
@@ -71,4 +84,3 @@ class RequestsMade(models.Model):
         question_name = str(self.challenge)
         time = str(self.made_at)
         return team_name +' - '+ question_name +' - '+ time
-

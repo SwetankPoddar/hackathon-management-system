@@ -3,7 +3,7 @@ from .models import Challenge, RequestsMade, Team, CustomUser
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout,authenticate,login
 from django.contrib.auth.decorators import user_passes_test
-from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation
+from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.paginator import Paginator
@@ -74,6 +74,16 @@ def index(request):
     else:
         form = customAuthenticationForm()
         return render(request, 'index.html', context={'form': form} )
+
+
+def challenge_cat_list(request):
+    categories = Challenge.get.CATEGORY_CHOICES()
+    context_dict = {
+        'categories':categories,
+    }
+
+    return render(request, 'test.html', context=context_dict)
+
 
 @login_required
 def challenge_list(request):
@@ -230,6 +240,24 @@ def create_request(request):
     newRequest.action = str(reverse('create_request'))
     newRequest.formFor = 'Create Request'
     return render(request, 'form_template.html', context={'form': newRequest})
+
+
+@login_required
+def create_category(request):
+    newCategory = createCategoryForm(request.POST or None)
+
+    if (request.method == 'POST'):
+        if newCategory.is_valid():
+            newCategory.save()
+            return redirect(reverse("challenge_list"))
+        else:
+            print(form.errors)
+
+    newCategory.action = str(reverse('create_category'))
+    newCategory.formFor = 'Create Category'
+    return render(request, 'form_template.html', context={'form': newCategory})
+
+
 
 @user_passes_test(checkIfAdmin)
 def create_challenge(request):

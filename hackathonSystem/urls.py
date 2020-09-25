@@ -19,16 +19,16 @@ urlpatterns = [
 
     # Open Requests List (Admin Page)
     path('request_list/', views.request_list, name='request_list'),
-    
+
     # Create Request (User Page)
     path('create_request/', views.create_request, name="create_request"),
-    
+
     # All Requests Made with marks and status (User Page)
     path('judged_list/', views.judged_list, name='judged_list'),
 
     # Detailed information about a request
     path('request/<int:request_id>/', views.request_details, name='request_details'),
-    
+
     # Score card and team information (Admin Only)
     path('teams/', views.teams, name='teams'),
 
@@ -38,9 +38,13 @@ urlpatterns = [
     # Create Challenge (Admin Only)
     path('create_challenge/', views.create_challenge, name="create_challenge"),
 
+    # Create Challenge (Admin Only)
+    path('create_category/', views.create_category, name="create_category"),
+
+
     # Close Request with marks (Admin Only)
     path('close_request/<int:requestID>/', views.close_request, name="close_request"),
-    
+
     # Closed Requests List (Admin Only)
     path('closed_requests/', views.closed_requests, name='closed_requests'),
 
