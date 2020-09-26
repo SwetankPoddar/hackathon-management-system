@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Challenge, RequestsMade, Team, CustomUser, Category
+from .models import Challenge, RequestsMade, Team, Judge, Category
 from django.contrib.auth.models import User
 
 ### HELPER FUNCTIONS ##
@@ -16,7 +16,6 @@ class createTeamForm(forms.ModelForm):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
-
     class Meta:
         model = Team
         fields = ('name',)
@@ -43,15 +42,18 @@ class createChallengeForm(forms.ModelForm):
         fields = ('name','points_avaliable','category','description')
 
     def __init__(self, *args, **kwargs):
+        self.judge = kwargs.pop('judge',None)
         super(createChallengeForm, self).__init__(*args, **kwargs)
+        self.fields['category'].queryset = Category.objects.filter(allowed_to_edit__in=[self.judge]) 
         addFormControlClass(self.visible_fields())
+       
 
 
 
 class createCategoryForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields = ('name',)
+        fields = ('name','allowed_to_edit')
 
     def __init__(self, *args, **kwargs):
         super(createCategoryForm, self).__init__(*args, **kwargs)
@@ -67,14 +69,10 @@ class createRequestForm(forms.ModelForm):
     def clean(self):
         data = self.cleaned_data
         questionID = data.get('challenge')
-        user = self.request.user
-        userObject = CustomUser.objects.get(user = user)
-        team = Team.objects.get(user = userObject)
+        team = Team.objects.get(user = self.request.user)
 
         if RequestsMade.objects.filter(team=team, challenge = questionID, status = "request_made").exists():
             self.add_error('challenge', 'You already have an open request for this question.  Please wait.')
-
-        self.add_error('challenge', 'We are no longer accepting any requests!')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -112,7 +110,7 @@ class editTeamInformation(forms.ModelForm):
 
     class Meta:
         model = Team
-        fields = ('member_details','hackerrank_accounts',)
+        fields = ('name','member_details','hackerrank_accounts',)
 
     def __init__(self, *args, **kwargs):
         super(editTeamInformation, self).__init__(*args, **kwargs)

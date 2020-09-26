@@ -1,5 +1,5 @@
 from django.shortcuts import render, reverse, redirect
-from .models import Challenge, RequestsMade, Team, CustomUser, Category
+from .models import Challenge, RequestsMade, Team, Judge, Category
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout,authenticate,login
 from django.contrib.auth.decorators import user_passes_test
@@ -14,14 +14,16 @@ from django.http import JsonResponse
 ##### HELPER FUNCTIONS #####
 
 def getTeam(request):
-
-    userModel = CustomUser.objects.get(user = request.user)
-
-    if(userModel.isAdmin()):
+    try:
+        return Team.objects.get(user = request.user)
+    except Team.DoesNotExist:
         return None
 
-    team = Team.objects.get(user = userModel)
-    return team
+def getJudge(request):
+    try:
+        return Judge.objects.get(user = request.user)
+    except Judge.DoesNotExist:
+        return None
 
 def calculateInformation(team):
     challenges = Challenge.objects.all()
@@ -47,10 +49,8 @@ def calculateInformation(team):
 
     return details
 
-
-def checkIfAdmin(user):
-    userModel = CustomUser.objects.get(user = user)
-    return userModel.isAdmin()
+def checkIfJudge(user):
+    return not user.is_anonymous and Judge.objects.filter(user = user).exists()
 
 def sortTeamByPoints(teamWithInformation):
     return teamWithInformation.information.points
@@ -60,17 +60,14 @@ def sortTeamByPoints(teamWithInformation):
 
 def index(request):
     if request.user.is_authenticated:
-        userModel = CustomUser.objects.get(user = request.user)
-        if(userModel.isAdmin()):
-            request.session['user_type'] = 'admin'
-            context = {}
+        if(request.user.is_staff):
+            request.session['user_type'] = 'judge'
+            context = {'judge': Judge.objects.get(user = request.user)}
         else:
             request.session['user_type'] = 'team'
-            team = Team.objects.get(user = userModel)
-            context={'team': team}
+            context={'team': Team.objects.get(user = request.user)}
 
         return render(request, 'index.html', context=context)
-
     else:
         form = customAuthenticationForm()
         return render(request, 'index.html', context={'form': form} )
@@ -143,16 +140,21 @@ def judged_list(request):
     return render(request, 'judged_list.html', context=context_dict)
 
 
-@user_passes_test(checkIfAdmin)
+@user_passes_test(checkIfJudge)
 def request_list(request):
-    openRequests = RequestsMade.objects.filter(status = "request_made")
+    openRequests = RequestsMade.objects.filter(
+        status = "request_made",
+        challenge__in = Challenge.objects.filter(
+            category__in = Category.objects.filter(allowed_to_edit__in=[getJudge(request)]) 
+        )
+    )
     context_dict = {'request_array': openRequests }
     if request.is_ajax():
-        data = {'rendered_table': render_to_string('hackathonSystem/table_content.html', context=context_dict)}
+        data = {'rendered_table': render_to_string('table_content.html', context=context_dict)}
         return JsonResponse(data)
     return render(request, 'request_list.html', context=context_dict)
 
-@user_passes_test(checkIfAdmin)
+@user_passes_test(checkIfJudge)
 def teams(request):
     allTeams = Team.objects.all()
 
@@ -182,7 +184,7 @@ def login_request(request):
 
 @login_required
 def request_details(request, request_id):
-    if(checkIfAdmin(request.user)):
+    if(checkIfJudge(request.user)):
         requestInfo = RequestsMade.objects.get(id = request_id)
     else:
         team = getTeam(request)
@@ -190,12 +192,12 @@ def request_details(request, request_id):
     context_dict = {'requestInfo': requestInfo}
     return render(request, 'request.html', context=context_dict)
 
-@user_passes_test(checkIfAdmin)
+@user_passes_test(checkIfJudge)
 def delete_request(request, request_id):
     RequestsMade.objects.filter(id = request_id).delete()
     return redirect(reverse('closed_requests'))
 
-@user_passes_test(checkIfAdmin)
+@user_passes_test(checkIfJudge)
 def closed_requests(request):
     closedRequests = RequestsMade.objects.filter(status = 'judged').order_by('-made_at')
     paginator = Paginator(closedRequests, 30)
@@ -203,10 +205,9 @@ def closed_requests(request):
     closedRequests = paginator.get_page(page)
     return render(request, 'closed_requests.html',{'requests': closedRequests})
 
-@user_passes_test(checkIfAdmin)
+@user_passes_test(checkIfJudge)
 def team_information(request, user_id):
-    customUser = CustomUser.objects.get(id = user_id)
-    team = Team.objects.get(user = customUser)
+    team = Team.objects.get(user = User.objects.get(id = user_id))
     teamScore = calculateInformation(team)
     return render(request, 'team_information.html',{'team':team, 'details':teamScore})
 
@@ -251,10 +252,8 @@ def create_category(request):
 
     if (request.method == 'POST'):
         if newCategory.is_valid():
-            newCategory.save()
-            return redirect(reverse("challenge_list"))
-        else:
-            print(form.errors)
+            cat = newCategory.save()
+            messages.success(request, 'Category successfully created')
 
     newCategory.action = str(reverse('create_category'))
     newCategory.formFor = 'Create Category'
@@ -262,10 +261,10 @@ def create_category(request):
 
 
 
-@user_passes_test(checkIfAdmin)
+@user_passes_test(checkIfJudge)
 def create_challenge(request):
 
-    newChallenge = createChallengeForm(request.POST or None)
+    newChallenge = createChallengeForm(request.POST or None, judge=getJudge(request))
 
     if(request.method == "POST"):
         if newChallenge.is_valid():
@@ -276,7 +275,7 @@ def create_challenge(request):
     newChallenge.formFor = 'Create Challenge'
     return render(request, 'form_template_challenge.html', context={'form': newChallenge})
 
-@user_passes_test(checkIfAdmin)
+@user_passes_test(checkIfJudge)
 def create_team(request):
     createTeamRequest = createTeamForm(request.POST or None)
 
@@ -284,15 +283,12 @@ def create_team(request):
         if createTeamRequest.is_valid():
             username = createTeamRequest.cleaned_data["username"]
             password = createTeamRequest.cleaned_data["password"]
+            team_name = createTeamRequest.cleaned_data["name"]
             # Create new user account
+            user = User.objects.create_user(username=username, password=password)
+            team = Team.objects.create(user = user, name = team_name)
 
-            user = User.objects.create_user(username, 'notRequired@lol.com', password)
-            user = CustomUser.objects.create(user = user, user_type = 1)
-
-            createTeamRequest = createTeamRequest.save(commit = False)
-            createTeamRequest.user = user
-            createTeamRequest.save()
-            messages.success(request, 'Team sucesfully created')
+            messages.success(request, 'Team successfully created')
             return redirect(reverse('create_team'))
 
     form = createTeamRequest
@@ -300,13 +296,17 @@ def create_team(request):
     form.formFor = 'Create Team'
     return render(request, 'form_template.html', context={'form': form,'col_size':'4'})
 
-@user_passes_test(checkIfAdmin)
+@user_passes_test(checkIfJudge)
 def close_request(request, requestID):
     try:
-        requestInstance = RequestsMade.objects.get(id = requestID, status = 'request_made')
-
+        requestInstance = RequestsMade.objects.get(
+            id = requestID,
+            status = 'request_made',
+            challenge__in = Challenge.objects.filter(
+            category__in = Category.objects.filter(allowed_to_edit__in=[getJudge(request)]) 
+            )
+        )
     except RequestsMade.DoesNotExist:
-        print('Invalid ID ' + str(requestID))
         return redirect(reverse('index'))
 
     if(request.method == "POST"):
@@ -316,7 +316,7 @@ def close_request(request, requestID):
         if(closeRequest.is_valid()):
             closeRequest = closeRequest.save(commit = False)
             closeRequest.status = "judged"
-            closeRequest.closed_by = CustomUser.objects.get(user = request.user)
+            closeRequest.closed_by = Judge.objects.get(user = request.user)
             closeRequest.save()
 
             return redirect(reverse('request_list'))

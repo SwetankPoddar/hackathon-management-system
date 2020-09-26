@@ -20,7 +20,7 @@ Home
 
   {% if user.is_authenticated %}
   <div class="alert alert-fade alert-primary alert-dismissible fade show" role="alert">
-    Hey <strong>{% if team %} {{ team.name |title }}  {% else %} {{ user.first_name|title }} {{ user.last_name|title}} {% endif %}</strong>, Welcome to Hacker Olympics!
+    Hey<strong>{% if team %} {{ team.name |title }}  {% else %} {{ request.user.first_name|title }} {{ request.user.last_name|title}} {% endif %}</strong>, Welcome to Hacker Olympics!
 
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
@@ -28,6 +28,28 @@ Home
 
     </button>
   </div>
+  {% if request.session.user_type == "team" %}
+    <div class="alert alert-info text-left" role="alert">
+      <h5 class="alert-heading">Identification information</h5>
+      <p>
+        Your team ID is <b>{{team.id}}</b>
+      </p>
+    </div>
+    <div class="alert alert-info text-left" role="alert">
+      <h5 class="alert-heading">Need help?</h5>
+      <p>Contact us at <a href="#">support@codeolympics.com</a>
+        <br>
+        <b class='mt-5'>Don't forget to mention your team ID in the title</b>
+      </p>
+    </div>
+  {% else %}
+  <div class="alert alert-info text-left" role="alert">
+    <h5 class="alert-heading">You are currently logged in as a Judge</h5>
+    <p>
+      This account has been registered for <b>{{judge.organisation.name}}</b>.
+    </p>
+  </div>
+  {% endif %}
 
   <!-- <div class="jumbotron">
       <img class="img-fluid"  src='{% static "images/logo.jpg" %}'>
