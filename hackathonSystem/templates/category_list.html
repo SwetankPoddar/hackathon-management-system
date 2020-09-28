@@ -25,37 +25,25 @@ Challenge Categories
 <div class="row justify-content-center ">
   {% for category in category_array %}
 
-
-
-<!-- <a href="{% url 'challenge_list' category.id %}" class="text-decoration-none ">
-<div class="row justify-content-center my-2">
-  <div class=" col-lg-8 col-xs-8 p-4 text-white bg-info rounded text-center">
-    <h3><strong>{{category.name}}<span class="badge ml-3 badge-light text-info">9</span></strong></h3>
+  <div class=" col-lg-5 col-xs-5 p-4 text-white bg-theme-color rounded text-center m-1">
+    <h3><strong>{{category.name}}<span class="badge ml-3 badge-light text-theme-color">9</span></strong></h3>
     {% if category.discription %}
     <p class="text-white-50">-  {{category.description}}</p>
     {% endif%}
     <p class="text-white-50">-  gasrgsrgsdrgsdrgsdrg{{category.description}}</p>
   </div>
-</div>
-</a> -->
-
-
-
-
-
-  <div class=" col-lg-5 col-xs-5 p-4 text-white bg-info rounded text-center m-1">
-    <h3><strong>{{category.name}}<span class="badge ml-3 badge-light text-info">9</span></strong></h3>
-    {% if category.discription %}
-    <p class="text-white-50">-  {{category.description}}</p>
-    {% endif%}
-    <p class="text-white-50">-  gasrgsrgsdrgsdrgsdrg{{category.description}}</p>
-  </div>
-
-
-
-
 
   {% endfor %}
+
+  <!-- this adds an empty column to balance out the display -->
+  {% if category_array.count|divisibleby:2 %}
+  {% else %}
+  <div class=" col-lg-5 col-xs-5 ">
+  </div>
+  {% endif %}
+
+
+
   </div>
 </div>
 </div>
