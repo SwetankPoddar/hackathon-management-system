@@ -21,7 +21,7 @@ Challenge Categories
 
 
 
-<div class="container">
+<div class="container" >
 <div class="row justify-content-center ">
   {% for category in category_array %}
 
@@ -31,6 +31,7 @@ Challenge Categories
     <p class="text-white-50">-  {{category.description}}</p>
     {% endif%}
     <p class="text-white-50">-  gasrgsrgsdrgsdrgsdrg{{category.description}}</p>
+    <a href="{% url 'challenge_list' category.id %}" class=" stretched-link"></a>
   </div>
 
   {% endfor %}
