@@ -2,42 +2,37 @@ from django.db import models
 from datetime import datetime
 from django.contrib.auth.models import User
 
-# User Model to include types
-class CustomUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    USER_TYPE_CHOICES = (
-      (1, 'team'),
-      (2, 'judge'),
-  )
-    user_type = models.PositiveSmallIntegerField(choices = USER_TYPE_CHOICES, default = USER_TYPE_CHOICES[0][0], blank = True)
+class Organisation(models.Model):
+    name = models.CharField(max_length = 60)
 
-    def isAdmin(self):
-        return self.user_type == 2
+class Judge(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    organisation = models.ForeignKey(Organisation, on_delete=models.SET_NULL, null=True)
 
     def getType(self):
-        if (self.user_type == 1):
-            return "Team"
-        else:
-            return "Judge"
-
+        return "judge"
+    
     def __str__(self):
-        return str(self.user.id) + ' - ' + self.getType()
+        return str(self.user)  + ' (Judge)'
 
 # Team Model
 class Team(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
     name = models.CharField(max_length = 30)
     member_details = models.TextField(max_length = 350)
     hackerrank_accounts = models.TextField(max_length = 500)
 
+    def getType(self):
+        return "team"
+
     def __str__(self):
-        return self.name
+        return self.name + '(Team)'
 
 
 
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
-
+    allowed_to_edit = models.ManyToManyField(Judge)
     class Meta:
         verbose_name_plural = 'Categories'
 
@@ -77,7 +72,7 @@ class RequestsMade(models.Model):
 
     notes = models.TextField(default='', blank = True, max_length = 250 )
 
-    closed_by = models.ForeignKey(CustomUser, on_delete = models.SET_NULL, blank = True, null = True )
+    closed_by = models.ForeignKey(Judge, on_delete = models.SET_NULL, blank = True, null = True)
 
     def __str__(self):
         team_name = str(self.team)

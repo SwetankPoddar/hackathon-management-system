@@ -31,7 +31,7 @@ Judgment List
           <td>{{ judgement.made_at }} </td>
           <td>
           {% if judgement.status == "judged" %}
-          {{ judgement.points_gained }}
+            {{ judgement.points_gained }} out of {{ judgement.challenge.points_avaliable }}
           {% else %}
           -
           {% endif %}
