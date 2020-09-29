@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from django.contrib.auth.models import User
+import os
 
 class Organisation(models.Model):
     name = models.CharField(max_length = 60)
@@ -32,6 +33,7 @@ class Team(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    description = models.CharField(max_length=150, null=True)
     allowed_to_edit = models.ManyToManyField(Judge)
     class Meta:
         verbose_name_plural = 'Categories'
@@ -39,6 +41,10 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Attachments(models.Model):
+    attachment =  models.FileField(upload_to='attachments/')
+    def __str__(self):
+        return os.path.basename(self.attachment.name)
 
 # Challenge Model
 class Challenge(models.Model):
@@ -46,7 +52,7 @@ class Challenge(models.Model):
     points_avaliable = models.IntegerField()
     description = models.TextField(max_length = 350)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-
+    attachments = models.ManyToManyField(Attachments)
     def __str__(self):
         return self.name
 

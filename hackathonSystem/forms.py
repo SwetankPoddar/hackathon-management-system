@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Challenge, RequestsMade, Team, Judge, Category
+from django.forms import ClearableFileInput
+from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments
 from django.contrib.auth.models import User
 
 ### HELPER FUNCTIONS ##
@@ -37,10 +38,10 @@ class createTeamForm(forms.ModelForm):
         addFormControlClass(self.visible_fields())
 
 class createChallengeForm(forms.ModelForm):
+    attachments = forms.FileField(widget=ClearableFileInput(attrs={'multiple': True}), required=False, label="Attachment (supports multiple)")
     class Meta:
         model = Challenge
         fields = ('name','points_avaliable','category','description')
-
     def __init__(self, *args, **kwargs):
         self.judge = kwargs.pop('judge',None)
         super(createChallengeForm, self).__init__(*args, **kwargs)
@@ -48,12 +49,18 @@ class createChallengeForm(forms.ModelForm):
         addFormControlClass(self.visible_fields())
        
 
-
+class AttachmentsUpload(forms.ModelForm):
+    class Meta:
+        model = Attachments
+        fields = ['attachment']
+        widgets = {
+            'attachment': ClearableFileInput(attrs={'multiple': True}),
+        }
 
 class createCategoryForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields = ('name','allowed_to_edit')
+        fields = ('name','description','allowed_to_edit')
 
     def __init__(self, *args, **kwargs):
         super(createCategoryForm, self).__init__(*args, **kwargs)
