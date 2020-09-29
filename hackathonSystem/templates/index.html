@@ -48,6 +48,14 @@ Home
     <p>
       This account has been registered for <b>{{judge.organisation.name}}</b>.
     </p>
+    <p>
+      You can manage challenges/request from the following categories:
+      <ul>
+        {% for category in allowed_categories %}
+          <li>{{category}}</li>
+        {% endfor %}
+      </ul>
+    </p>
   </div>
   {% endif %}
 

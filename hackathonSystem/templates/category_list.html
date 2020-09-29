@@ -13,7 +13,7 @@ Challenge Categories
 <div class="container text-center">
   {% for category in category_array %}
     <div class='category-item'>
-        <a href="{% url 'challenge_list' category.id %}">{{category.name}}</a>
+        <a href="{% url 'challenge_list' category.id %}">{{category}}</a>
     </div>
   {% endfor %}
 </div>

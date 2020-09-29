@@ -1,15 +1,16 @@
 from django.shortcuts import render, reverse, redirect
-from .models import Challenge, RequestsMade, Team, Judge, Category
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout,authenticate,login
 from django.contrib.auth.decorators import user_passes_test
-from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.http import JsonResponse
+
+from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm
+from .models import Challenge, RequestsMade, Team, Judge, Category
 
 ##### HELPER FUNCTIONS #####
 
@@ -62,10 +63,12 @@ def index(request):
     if request.user.is_authenticated:
         if(request.user.is_staff):
             request.session['user_type'] = 'judge'
-            context = {'judge': Judge.objects.get(user = request.user)}
+            judge = getJudge(request)
+            allowed_categories = Category.objects.filter(allowed_to_edit__in=[judge]) 
+            context = {'judge': judge, 'allowed_categories': allowed_categories}
         else:
             request.session['user_type'] = 'team'
-            context={'team': Team.objects.get(user = request.user)}
+            context={'team': getTeam(request)}
 
         return render(request, 'index.html', context=context)
     else:
@@ -75,11 +78,9 @@ def index(request):
 
 @login_required
 def category_list(request):
-    challenges = Category.objects.all()
-    team = getTeam(request)
-    details = calculateInformation(team)
-
-    context_dict={'category_array': challenges, 'details': details}
+    context_dict = {'category_array': Category.objects.all()}
+    if(request.session['user_type'] == 'team'):
+        context_dict['details'] = calculateInformation(getTeam(request))
 
     return render(request, 'category_list.html', context=context_dict)
 
@@ -211,11 +212,10 @@ def team_information(request, user_id):
     teamScore = calculateInformation(team)
     return render(request, 'team_information.html',{'team':team, 'details':teamScore})
 
-##### FORMS  #####
+##### FORM VIEWS  #####
 @login_required
 def edit_information(request):
     team = getTeam(request)
-
     teamInformation = editTeamInformation(request.POST or None, instance=team)
     if(request.method == "POST"):
         if teamInformation.is_valid():
@@ -223,17 +223,13 @@ def edit_information(request):
             return redirect(reverse('edit_information'))
 
     teamInformation.action = str(reverse('edit_information'))
-
     teamInformation.formFor = "Edit Team Information"
-
     return render(request, 'form_template.html', context={'form': teamInformation,'col_size':'8'})
 
 
 @login_required
 def create_request(request):
-
     newRequest = createRequestForm(request.POST or None, request = request)
-
     if(request.method == "POST"):
         if newRequest.is_valid():
             newRequest = newRequest.save(commit = False)
@@ -249,7 +245,6 @@ def create_request(request):
 @login_required
 def create_category(request):
     newCategory = createCategoryForm(request.POST or None)
-
     if (request.method == 'POST'):
         if newCategory.is_valid():
             cat = newCategory.save()
@@ -259,17 +254,12 @@ def create_category(request):
     newCategory.formFor = 'Create Category'
     return render(request, 'form_template.html', context={'form': newCategory})
 
-
-
 @user_passes_test(checkIfJudge)
 def create_challenge(request):
-
     newChallenge = createChallengeForm(request.POST or None, judge=getJudge(request))
-
-    if(request.method == "POST"):
-        if newChallenge.is_valid():
-            newChallenge = newChallenge.save()
-            return redirect(reverse("challenge_details",kwargs={'challenge_id': newChallenge.id}))
+    if request.method == "POST" and newChallenge.is_valid():
+        newChallenge = newChallenge.save()
+        return redirect(reverse("challenge_details",kwargs={'challenge_id': newChallenge.id}))
 
     newChallenge.action = str(reverse('create_challenge'))
     newChallenge.formFor = 'Create Challenge'
@@ -303,7 +293,7 @@ def close_request(request, requestID):
             id = requestID,
             status = 'request_made',
             challenge__in = Challenge.objects.filter(
-            category__in = Category.objects.filter(allowed_to_edit__in=[getJudge(request)]) 
+                category__in = Category.objects.filter(allowed_to_edit__in=[getJudge(request)]) 
             )
         )
     except RequestsMade.DoesNotExist:
