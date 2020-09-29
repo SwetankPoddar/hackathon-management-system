@@ -21,16 +21,15 @@ Challenge Categories
 
 
 
-<div class="container" >
-<div class="row justify-content-center ">
+<div class="container">
+<div class="row justify-content-center">
   {% for category in category_array %}
-  <div class=" col-lg-5 col-xs-5 p-4 text-white bg-theme-color rounded text-center m-1">
-    <h3><strong>{{category.name}}<span class="badge ml-3 badge-light text-theme-color">9</span></strong></h3>
-    {% if category.discription %}
-    <p class="text-white-50">-  {{category.description}}</p>
-    {% endif%}
-    <p class="text-white-50">-  gasrgsrgsdrgsdrgsdrg{{category.description}}</p>
-    <a href="{% url 'challenge_list' category.id %}" class=" stretched-link"></a>
+  <div class="col-lg-5 col-xs-5 p-4 text-white bg-theme-color rounded text-center m-1 category-item">
+    <h3><strong>{{category.name}}<span class="badge ml-auto badge-light text-theme-color">{{ category.num_challenge }}</span></strong></h3>
+    {% if category.description %}
+    <p class="text-white-50">{{category.description}}</p>
+    {% endif %}
+    <a href="{% url 'challenge_list' category.id %}" class="stretched-link"></a>
   </div>
   {% endfor %}
 

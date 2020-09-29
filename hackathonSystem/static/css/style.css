@@ -32,3 +32,13 @@ footer {
 .text-theme-color{
   color: #f68332;
 }
+
+.category-item {
+  position: relative;
+}
+
+.category-item .badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}

@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 
 from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm
-from .models import Challenge, RequestsMade, Team, Judge, Category
+from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments
 
 ##### HELPER FUNCTIONS #####
 
@@ -78,7 +78,10 @@ def index(request):
 
 @login_required
 def category_list(request):
-    context_dict = {'category_array': Category.objects.all()}
+    categories = Category.objects.all()
+    for category in categories:
+        category.num_challenge = Challenge.objects.filter(category = category).count()
+    context_dict = {'category_array': categories}
     if(request.session['user_type'] == 'team'):
         context_dict['details'] = calculateInformation(getTeam(request))
 
@@ -229,13 +232,17 @@ def edit_information(request):
 
 @login_required
 def create_request(request):
-    newRequest = createRequestForm(request.POST or None, request = request)
-    if(request.method == "POST"):
-        if newRequest.is_valid():
-            newRequest = newRequest.save(commit = False)
-            newRequest.team = getTeam(request)
-            newRequest.save()
-            return redirect(reverse("judged_list"))
+    newRequest = createRequestForm(request.POST or None, request.FILES or None, request = request)
+    if request.method == "POST" and newRequest.is_valid():
+        newRequest = newRequest.save(commit = False)
+        newRequest.team = getTeam(request)
+        newRequest.save()
+        files = request.FILES.getlist('attachments')
+        for f in files:
+            file_instance = Attachments(attachment=f)
+            file_instance.save()
+            newRequest.attachments.add(file_instance)
+        return redirect(reverse("judged_list"))
 
     newRequest.action = str(reverse('create_request'))
     newRequest.formFor = 'Create Request'
@@ -256,9 +263,14 @@ def create_category(request):
 
 @user_passes_test(checkIfJudge)
 def create_challenge(request):
-    newChallenge = createChallengeForm(request.POST or None, judge=getJudge(request))
+    newChallenge = createChallengeForm(request.POST or None, request.FILES or None, judge=getJudge(request))
     if request.method == "POST" and newChallenge.is_valid():
         newChallenge = newChallenge.save()
+        files = request.FILES.getlist('attachments')
+        for f in files:
+            file_instance = Attachments(attachment=f)
+            file_instance.save()
+            newChallenge.attachments.add(file_instance)
         return redirect(reverse("challenge_details",kwargs={'challenge_id': newChallenge.id}))
 
     newChallenge.action = str(reverse('create_challenge'))

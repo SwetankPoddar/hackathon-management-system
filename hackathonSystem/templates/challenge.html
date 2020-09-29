@@ -47,6 +47,14 @@ Challenge - {{ challenge.name }}
           <td>Detailed Description</td>
           <td>{{ challenge.description }}</td>
         </tr>
+        <tr>
+          <td>Attachments</td>
+          <td>
+            {% for attachment_entity in challenge.attachments.all %}
+            {{ forloop.counter }}. <a target='_blank' href='{{ attachment_entity.attachment.url }}'>{{ attachment_entity }}</a><br/>
+            {% endfor %}
+          </td>
+        </tr>
     </table>
   {% endif %}
 

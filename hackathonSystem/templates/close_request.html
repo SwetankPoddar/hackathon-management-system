@@ -16,7 +16,7 @@ Request #{{ requestDetails.id }} by team {{ requestDetails.team }}
           <td>{{ requestDetails.team }} ( {{ requestDetails.team.user.id }} ) </td>
       </tr>
       <tr>
-          <td>Question</td>
+          <td>Challenge</td>
           <td><a href="{% url 'challenge_details' requestDetails.challenge.id %}">{{ requestDetails.challenge }}</a></td>
       </tr>
       {% if requestDetails.notes %}
@@ -25,6 +25,12 @@ Request #{{ requestDetails.id }} by team {{ requestDetails.team }}
           <td> {{ requestDetails.notes }}</td>
       </tr>
       {% endif %}
+      <td>Attachments</td>
+        <td>
+          {% for attachment_entity in requestDetails.attachments.all %}
+          {{ forloop.counter }}. <a target='_blank' href='{{ attachment_entity.attachment.url }}'>{{ attachment_entity }}</a><br/>
+          {% endfor %}
+        </td>
   </table>
   <hr>
   <form method="POST" action="{% url 'close_request' requestDetails.id %}">

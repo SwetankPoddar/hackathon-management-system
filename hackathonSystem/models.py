@@ -1,10 +1,13 @@
 from django.db import models
 from datetime import datetime
 from django.contrib.auth.models import User
+import os
 
 class Organisation(models.Model):
     name = models.CharField(max_length = 60)
 
+    def __str__(self):
+        return self.name
 class Judge(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     organisation = models.ForeignKey(Organisation, on_delete=models.SET_NULL, null=True)
@@ -13,7 +16,7 @@ class Judge(models.Model):
         return "judge"
     
     def __str__(self):
-        return str(self.user)  + ' (Judge)'
+        return self.user.first_name + ' ' + self.user.last_name + ' from ' + str(self.organisation)
 
 # Team Model
 class Team(models.Model):
@@ -32,6 +35,7 @@ class Team(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    description = models.CharField(max_length=150, null=True)
     allowed_to_edit = models.ManyToManyField(Judge)
     class Meta:
         verbose_name_plural = 'Categories'
@@ -39,6 +43,10 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Attachments(models.Model):
+    attachment =  models.FileField(upload_to='attachments/')
+    def __str__(self):
+        return os.path.basename(self.attachment.name)
 
 # Challenge Model
 class Challenge(models.Model):
@@ -46,7 +54,7 @@ class Challenge(models.Model):
     points_avaliable = models.IntegerField()
     description = models.TextField(max_length = 350)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-
+    attachments = models.ManyToManyField(Attachments)
     def __str__(self):
         return self.name
 
@@ -60,6 +68,8 @@ class RequestsMade(models.Model):
     challenge = models.ForeignKey(Challenge, on_delete = models.CASCADE)
 
     points_gained = models.IntegerField(default=0, blank= True)
+
+    attachments = models.ManyToManyField(Attachments)
 
     REQUEST_STATUS = (
         ('request_made', 'Request made'),
