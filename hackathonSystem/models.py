@@ -6,6 +6,8 @@ import os
 class Organisation(models.Model):
     name = models.CharField(max_length = 60)
 
+    def __str__(self):
+        return self.name
 class Judge(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     organisation = models.ForeignKey(Organisation, on_delete=models.SET_NULL, null=True)
@@ -14,7 +16,7 @@ class Judge(models.Model):
         return "judge"
     
     def __str__(self):
-        return str(self.user)  + ' (Judge)'
+        return self.user.first_name + ' ' + self.user.last_name + ' from ' + str(self.organisation)
 
 # Team Model
 class Team(models.Model):
@@ -68,7 +70,7 @@ class RequestsMade(models.Model):
     points_gained = models.IntegerField(default=0, blank= True)
 
     attachments = models.ManyToManyField(Attachments)
-    
+
     REQUEST_STATUS = (
         ('request_made', 'Request made'),
         ('judged', 'Judged'),

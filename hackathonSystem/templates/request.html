@@ -60,7 +60,7 @@ Request #{{requestInfo.id}}
       {% if requestInfo.status == "judged" %}
       <tr>
         <td>Judged By</td>
-        <td>{{ requestInfo.closed_by.user.first_name|title }} {{ requestInfo.closed_by.user.last_name|title }}</td>
+        <td>{{ requestInfo.closed_by}}</td>
       </tr>
       {% endif %}
   </table>
