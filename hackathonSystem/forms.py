@@ -76,8 +76,9 @@ class createRequestForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
+        self.selected_challenge = self.request.GET.get('challenge_id', None)
         super(createRequestForm, self).__init__(*args, **kwargs)
-
+        self.initial['challenge'] = self.selected_challenge
         addFormControlClass(self.visible_fields())
 
 class closeRequestForm(forms.ModelForm):

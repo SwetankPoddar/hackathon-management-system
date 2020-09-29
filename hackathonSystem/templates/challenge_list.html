@@ -13,17 +13,19 @@ Challenge List
 <div class="container text-center">
   <table class="table sortable">
       <tr>
-        <th>Number</th>
+        <th>Challenge Number</th>
         <th>Name</th>
         <th>Max points</th>
         {% if request.session.user_type == "team" %} <th>Status</th> {% endif %}
+        <th>View</th>
       </tr>
       {% for challenge in challenge_array %}
         <tr>
-          <td><a href="{% url 'challenge_details' challenge.id %}">{{ challenge.id }}</a> </td>
+          <td>{{ challenge.id }}</td>
           <td>{{ challenge.name|title }} </td>
           <td>{{ challenge.points_avaliable }} </td>
           {% if request.session.user_type == "team" %} <td>{{ challenge.status }}</td> {% endif %}
+          <td><a href="{% url 'challenge_details' challenge.id %}">View</a> </td>
         </tr>
       {% endfor %}
   </table>

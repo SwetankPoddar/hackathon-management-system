@@ -25,6 +25,10 @@ Challenge - {{ challenge.name }}
           <td>{{ challenge.name }}</td>
         </tr>
         <tr>
+          <td>Category</td>
+          <td>{{ challenge.category }}</td>
+        </tr>
+        <tr>
           <td>Points Avaliable</td>
           <td>{{ challenge.points_avaliable }}</td>
         </tr>
@@ -35,7 +39,8 @@ Challenge - {{ challenge.name }}
         </tr>
         <tr>
           <td>Status</td>
-          <td><b>{{ status }}</b> {% if request_id %} (<a href="{% url 'request_details' request_id %}">More Information</a>) {% endif %}</td>
+          <td><b>{{ status }}</b>
+           - {% if request_id %}<a href="{% url 'request_details' request_id %}">More Information</a>{% else %}<a href="{% url 'create_request' %}?challenge_id={{ challenge.id }}">Submit a request</a>{% endif %}</td>
         </tr>
         {% endif %}
         <tr>

@@ -24,7 +24,6 @@ Challenge Categories
 <div class="container" >
 <div class="row justify-content-center ">
   {% for category in category_array %}
-
   <div class=" col-lg-5 col-xs-5 p-4 text-white bg-theme-color rounded text-center m-1">
     <h3><strong>{{category.name}}<span class="badge ml-3 badge-light text-theme-color">9</span></strong></h3>
     {% if category.discription %}
@@ -33,7 +32,6 @@ Challenge Categories
     <p class="text-white-50">-  gasrgsrgsdrgsdrgsdrg{{category.description}}</p>
     <a href="{% url 'challenge_list' category.id %}" class=" stretched-link"></a>
   </div>
-
   {% endfor %}
 
   <!-- this adds an empty column to balance out the display -->
