@@ -145,6 +145,13 @@
 				{% block javascript %}
 				{% endblock %}
 
+				<script>
+				$(function() {
+					if ((location.pathname.split("/")[1]) !== ""){
+						$('nav a[href^="/' + location.pathname.split("/")[1] + '"]').addClass('active');
+					}
+				});
+				</script>
 
     </body>
 </html>
