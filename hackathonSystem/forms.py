@@ -47,16 +47,7 @@ class createChallengeForm(forms.ModelForm):
         super(createChallengeForm, self).__init__(*args, **kwargs)
         self.fields['category'].queryset = Category.objects.filter(allowed_to_edit__in=[self.judge]) 
         addFormControlClass(self.visible_fields())
-       
-
-class AttachmentsUpload(forms.ModelForm):
-    class Meta:
-        model = Attachments
-        fields = ['attachment']
-        widgets = {
-            'attachment': ClearableFileInput(attrs={'multiple': True}),
-        }
-
+    
 class createCategoryForm(forms.ModelForm):
     class Meta:
         model = Category
@@ -68,7 +59,7 @@ class createCategoryForm(forms.ModelForm):
 
 
 class createRequestForm(forms.ModelForm):
-
+    attachments = forms.FileField(widget=ClearableFileInput(attrs={'multiple': True}), required=False, label="Attachment (supports multiple)")
     class Meta:
         model = RequestsMade
         fields = ('challenge','notes')

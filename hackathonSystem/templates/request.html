@@ -49,6 +49,14 @@ Request #{{requestInfo.id}}
           {% endif %}
         </td>
       </tr>
+      <tr>
+        <td>Attachments</td>
+        <td>
+          {% for attachment_entity in requestInfo.attachments.all %}
+          {{ forloop.counter }}. <a target='_blank' href='{{ attachment_entity.attachment.url }}'>{{ attachment_entity }}</a><br/>
+          {% endfor %}
+        </td>
+      </tr>
       {% if requestInfo.status == "judged" %}
       <tr>
         <td>Judged By</td>

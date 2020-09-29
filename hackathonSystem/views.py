@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 
-from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm,AttachmentsUpload
+from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm
 from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments
 
 ##### HELPER FUNCTIONS #####
@@ -232,12 +232,16 @@ def edit_information(request):
 
 @login_required
 def create_request(request):
-    newRequest = createRequestForm(request.POST or None, request = request)
-    attachments = AttachmentsUpload(request.POST or None, request.FILES or None)
-    if newRequest.is_valid():
+    newRequest = createRequestForm(request.POST or None, request.FILES or None, request = request)
+    if request.method == "POST" and newRequest.is_valid():
         newRequest = newRequest.save(commit = False)
         newRequest.team = getTeam(request)
         newRequest.save()
+        files = request.FILES.getlist('attachments')
+        for f in files:
+            file_instance = Attachments(attachment=f)
+            file_instance.save()
+            newRequest.attachments.add(file_instance)
         return redirect(reverse("judged_list"))
 
     newRequest.action = str(reverse('create_request'))
@@ -262,7 +266,6 @@ def create_challenge(request):
     newChallenge = createChallengeForm(request.POST or None, request.FILES or None, judge=getJudge(request))
     if request.method == "POST" and newChallenge.is_valid():
         newChallenge = newChallenge.save()
-        print(request.FILES.getlist('attachments'))
         files = request.FILES.getlist('attachments')
         for f in files:
             file_instance = Attachments(attachment=f)

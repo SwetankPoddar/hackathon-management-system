@@ -67,6 +67,8 @@ class RequestsMade(models.Model):
 
     points_gained = models.IntegerField(default=0, blank= True)
 
+    attachments = models.ManyToManyField(Attachments)
+    
     REQUEST_STATUS = (
         ('request_made', 'Request made'),
         ('judged', 'Judged'),
