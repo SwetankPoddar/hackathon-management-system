@@ -15,101 +15,75 @@ Challenge - {{ challenge.name }}
 
 
 
+<div class="container">
 
-<div class="container text-center">
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <h3 class="h3-margin-bot"><strong>ID<span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">{{ challenge.id }}</span></strong></h3>
+</div>
+</div>
 
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <h3 class="h3-margin-bot"><strong>Name<span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">{{ challenge.name}}</span></strong></h3>
+</div>
+</div>
 
-  <table class="table table-hover">
-  <tbody>
-    <tr>
-      <td>Challenge Number</td>
-      <td>{{ challenge.id }}</td>
-    </tr>
-    <tr>
-      <td>Challenge Name</td>
-      <td>{{ challenge.name }}</td>
-    </tr>
-    <tr>
-      <td>Category</td>
-      <td>{{ challenge.category }}</td>
-    </tr>
-    <tr>
-      <td>Points Avaliable</td>
-      <td>{{ challenge.points_avaliable }}</td>
-    </tr>
-    {% if request.session.user_type == "team" %}
-    <tr>
-      <td>Points Gained (so far)</td>
-      <td>{{ points_gained }}</td>
-    </tr>
-    <tr>
-      <td>Status</td>
-      <td><b>{{ status }}</b>
-       - {% if request_id %}<a href="{% url 'request_details' request_id %}">More Information</a>{% else %}<a href="{% url 'create_request' %}?challenge_id={{ challenge.id }}">Submit a request</a>{% endif %}</td>
-    </tr>
-    {% endif %}
-    <tr>
-      <td>Detailed Description</td>
-      <td>{{ challenge.description }}</td>
-    </tr>
-    <tr>
-      <td>Attachments</td>
-      <td>
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <h3 class="h3-margin-bot"><strong>Category<span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">{{ challenge.category }}</span></strong></h3>
+</div>
+</div>
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <h3 class="h3-margin-bot"><strong>Points Avaliable<span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">{{ challenge.points_avaliable }}</span></strong></h3>
+</div>
+</div>
+
+{% if request.session.user_type == "team" %}
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <h3 class="h3-margin-bot"><strong>Points Gained (so far)<span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">{{ points_gained }}</span></strong></h3>
+</div>
+</div>
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <h3 class="h3-margin-bot"><strong>Status<span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">{{ status }} |{% if request_id %}<a href="{% url 'request_details' request_id %}"> Info</a>{% else %}<a href="{% url 'create_request' %}?challenge_id={{ challenge.id }}"> Attempt</a>{% endif %}</span></strong></h3>
+</div>
+</div>
+
+{% endif %}
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <h3 class="h3-margin-bot">
+    <strong>
+      Attachments
+      <span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">
         {% for attachment_entity in challenge.attachments.all %}
         {{ forloop.counter }}. <a target='_blank' href='{{ attachment_entity.attachment.url }}'>{{ attachment_entity }}</a><br/>
         {% endfor %}
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-  {% if challenge %}
-    <table class="table">
-        <tr>
-          <td>Challenge Number</td>
-          <td>{{ challenge.id }}</td>
-        </tr>
-        <tr>
-          <td>Challenge Name</td>
-          <td>{{ challenge.name }}</td>
-        </tr>
-        <tr>
-          <td>Category</td>
-          <td>{{ challenge.category }}</td>
-        </tr>
-        <tr>
-          <td>Points Avaliable</td>
-          <td>{{ challenge.points_avaliable }}</td>
-        </tr>
-        {% if request.session.user_type == "team" %}
-        <tr>
-          <td>Points Gained (so far)</td>
-          <td>{{ points_gained }}</td>
-        </tr>
-        <tr>
-          <td>Status</td>
-          <td><b>{{ status }}</b>
-           - {% if request_id %}<a href="{% url 'request_details' request_id %}">More Information</a>{% else %}<a href="{% url 'create_request' %}?challenge_id={{ challenge.id }}">Submit a request</a>{% endif %}</td>
-        </tr>
-        {% endif %}
-        <tr>
-          <td>Detailed Description</td>
-          <td>{{ challenge.description }}</td>
-        </tr>
-        <tr>
-          <td>Attachments</td>
-          <td>
-            {% for attachment_entity in challenge.attachments.all %}
-            {{ forloop.counter }}. <a target='_blank' href='{{ attachment_entity.attachment.url }}'>{{ attachment_entity }}</a><br/>
-            {% endfor %}
-          </td>
-        </tr>
-    </table>
-  {% endif %}
+      </span>
+    </strong>
+  </h3>
+</div>
+</div>
 
 
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-center m-1 category-item">
+  <h3 class="h3-margin-bot"><strong>Detailed Description</strong></h3>
+  <div class="bg-white text-dark p-2 m-1 text-break rounded">{{ challenge.description }}</div>
+</div>
+</div>
 
 </div>
+
+
 
 
 {% endblock %}
