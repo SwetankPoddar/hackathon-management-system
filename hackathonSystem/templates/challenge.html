@@ -19,25 +19,25 @@ Challenge - {{ challenge.name }}
 
 <div class="row justify-content-center">
 <div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
-  <h3 class="h3-margin-bot"><strong>ID<span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">{{ challenge.id }}</span></strong></h3>
+  <div class="h3-margin-bot"><span class="h3"><strong>ID</strong></span><div class="text-dark float-right  bg-white rounded p-2 px-3">{{ challenge.id}}</div></div>
 </div>
 </div>
 
 <div class="row justify-content-center">
 <div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
-  <h3 class="h3-margin-bot"><strong>Name<span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">{{ challenge.name}}</span></strong></h3>
+  <div class="h3-margin-bot"><span class="h3"><strong>Name</strong></span><span class="text-dark float-right  bg-white rounded p-2 px-3">{{ challenge.name}}</span></div>
 </div>
 </div>
 
 <div class="row justify-content-center">
 <div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
-  <h3 class="h3-margin-bot"><strong>Category<span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">{{ challenge.category }}</span></strong></h3>
+  <div class="h3-margin-bot"><span class="h3"><strong>Category</strong></span><span class="text-dark float-right  bg-white rounded p-2 px-3">{{ challenge.category }}</span></div>
 </div>
 </div>
 
 <div class="row justify-content-center">
 <div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
-  <h3 class="h3-margin-bot"><strong>Points Avaliable<span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">{{ challenge.points_avaliable }}</span></strong></h3>
+  <div class="h3-margin-bot"><span class="h3"><strong>Points Avaliable</strong></span><span class="text-dark float-right  bg-white rounded p-2 px-3">{{ challenge.points_avaliable }}</span></div>
 </div>
 </div>
 
@@ -45,30 +45,27 @@ Challenge - {{ challenge.name }}
 
 <div class="row justify-content-center">
 <div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
-  <h3 class="h3-margin-bot"><strong>Points Gained (so far)<span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">{{ points_gained }}</span></strong></h3>
+  <div class="h3-margin-bot"><span class="h3"><strong>Points Gained (so far)</strong></span><span class="text-dark float-right  bg-white rounded p-2 px-3">{{ points_gained }}</span></div>
 </div>
 </div>
 
 <div class="row justify-content-center">
-<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
-  <h3 class="h3-margin-bot"><strong>Status<span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">{{ status }} |{% if request_id %}<a href="{% url 'request_details' request_id %}"> Info</a>{% else %}<a href="{% url 'create_request' %}?challenge_id={{ challenge.id }}"> Attempt</a>{% endif %}</span></strong></h3>
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-center m-1 category-item">
+  <h3 class="h3-margin-bot text-left pl-1"><strong>Status</strong></h3>
+  <div class="bg-white text-dark p-2 m-1 text-break rounded">{{ status }} |{% if request_id %}<a href="{% url 'request_details' request_id %}"> Info</a>{% else %}<a href="{% url 'create_request' %}?challenge_id={{ challenge.id }}"> Attempt</a>{% endif %}</div>
 </div>
 </div>
 
 {% endif %}
 
 <div class="row justify-content-center">
-<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
-  <h3 class="h3-margin-bot">
-    <strong>
-      Attachments
-      <span class="text-theme-color float-right  bg-white rounded px-1 pb-1 ml-2">
-        {% for attachment_entity in challenge.attachments.all %}
-        {{ forloop.counter }}. <a target='_blank' href='{{ attachment_entity.attachment.url }}'>{{ attachment_entity }}</a><br/>
-        {% endfor %}
-      </span>
-    </strong>
-  </h3>
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-center m-1 category-item">
+  <h3 class="h3-margin-bot text-left pl-1"><strong>Attachments</strong></h3>
+  <div class="bg-white text-dark p-2 m-1 text-break rounded">
+    {% for attachment_entity in challenge.attachments.all %}
+    {{ forloop.counter }}. <a target='_blank' href='{{ attachment_entity.attachment.url }}'>{{ attachment_entity }}</a><br/>
+    {% endfor %}
+  </div>
 </div>
 </div>
 
@@ -76,7 +73,7 @@ Challenge - {{ challenge.name }}
 
 <div class="row justify-content-center">
 <div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-center m-1 category-item">
-  <h3 class="h3-margin-bot"><strong>Detailed Description</strong></h3>
+  <h3 class="h3-margin-bot text-left pl-1"><strong>Detailed Description</strong></h3>
   <div class="bg-white text-dark p-2 m-1 text-break rounded">{{ challenge.description }}</div>
 </div>
 </div>
