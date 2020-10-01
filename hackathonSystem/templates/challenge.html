@@ -12,7 +12,56 @@ Challenge - {{ challenge.name }}
 {% endblock %}
 
 {% block body_block %}
+
+
+
+
 <div class="container text-center">
+
+
+  <table class="table table-hover">
+  <tbody>
+    <tr>
+      <td>Challenge Number</td>
+      <td>{{ challenge.id }}</td>
+    </tr>
+    <tr>
+      <td>Challenge Name</td>
+      <td>{{ challenge.name }}</td>
+    </tr>
+    <tr>
+      <td>Category</td>
+      <td>{{ challenge.category }}</td>
+    </tr>
+    <tr>
+      <td>Points Avaliable</td>
+      <td>{{ challenge.points_avaliable }}</td>
+    </tr>
+    {% if request.session.user_type == "team" %}
+    <tr>
+      <td>Points Gained (so far)</td>
+      <td>{{ points_gained }}</td>
+    </tr>
+    <tr>
+      <td>Status</td>
+      <td><b>{{ status }}</b>
+       - {% if request_id %}<a href="{% url 'request_details' request_id %}">More Information</a>{% else %}<a href="{% url 'create_request' %}?challenge_id={{ challenge.id }}">Submit a request</a>{% endif %}</td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td>Detailed Description</td>
+      <td>{{ challenge.description }}</td>
+    </tr>
+    <tr>
+      <td>Attachments</td>
+      <td>
+        {% for attachment_entity in challenge.attachments.all %}
+        {{ forloop.counter }}. <a target='_blank' href='{{ attachment_entity.attachment.url }}'>{{ attachment_entity }}</a><br/>
+        {% endfor %}
+      </td>
+    </tr>
+  </tbody>
+</table>
 
   {% if challenge %}
     <table class="table">
