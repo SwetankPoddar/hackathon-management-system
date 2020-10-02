@@ -2,6 +2,12 @@ from django.db import models
 from datetime import datetime
 from django.contrib.auth.models import User
 import os
+from django.core.exceptions import ValidationError
+
+def file_size(value): # add this to some file where you can import it from
+    limit = 2 * 1024 * 1024
+    if value.size > limit:
+        raise ValidationError('File too large. Size should not exceed 2 MiB.')
 
 class Organisation(models.Model):
     name = models.CharField(max_length = 60)
@@ -44,7 +50,7 @@ class Category(models.Model):
         return self.name
 
 class Attachments(models.Model):
-    attachment =  models.FileField(upload_to='attachments/')
+    attachment =  models.FileField(upload_to='attachments/', validators=[file_size])
     def __str__(self):
         return os.path.basename(self.attachment.name)
 

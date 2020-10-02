@@ -4,6 +4,8 @@ from django.forms import ClearableFileInput
 from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments
 from django.contrib.auth.models import User
 
+MAX_UPLOAD_FILE_SIZE = 2 * 1024 * 1024
+
 ### HELPER FUNCTIONS ##
 
 def addFormControlClass(fields):
@@ -66,10 +68,14 @@ class createRequestForm(forms.ModelForm):
 
     def clean(self):
         data = self.cleaned_data
-        questionID = data.get('challenge')
+        challenge = data.get('challenge')
         team = Team.objects.get(user = self.request.user)
 
-        if RequestsMade.objects.filter(team=team, challenge = questionID, status = "request_made").exists():
+        for f in self.request.FILES.getlist('attachments'):
+            if f.size > MAX_UPLOAD_FILE_SIZE:
+                self.add_error('attachments', f._get_name() + ' too large. EachSize should not exceed 2 MB.')
+
+        if RequestsMade.objects.filter(team=team, challenge = challenge, status = "request_made").exists():
             self.add_error('challenge', 'You already have an open request for this question.  Please wait.')
 
     def __init__(self, *args, **kwargs):
