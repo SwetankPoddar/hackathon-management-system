@@ -55,3 +55,7 @@ footer {
 .h3-margin-bot{
   margin-bottom:1px !important;
 }
+
+.h3-margin-bot  {
+  padding: 0.5em;
+}

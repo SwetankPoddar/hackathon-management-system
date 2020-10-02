@@ -88,7 +88,7 @@ class RequestsMade(models.Model):
 
     notes = models.TextField(default='', blank = True, max_length = 250 )
 
-    closed_by = models.ForeignKey(Judge, on_delete = models.SET_NULL, blank = True, null = True)
+    closed_by = models.ForeignKey(Judge, on_delete = models.SET_NULL, blank = True, null = True, default = None)
 
     def __str__(self):
         team_name = str(self.team)

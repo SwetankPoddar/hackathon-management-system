@@ -27,8 +27,15 @@ def getJudge(request):
     except Judge.DoesNotExist:
         return None
 
-def calculateInformation(team):
-    challenges = Challenge.objects.all()
+def calculateInformation(team, category_id = None):
+    challenges = None
+
+    if(category_id):
+        challenges = Challenge.objects.filter(category = category_id)
+    else:
+        challenges = Challenge.objects.all()
+
+
 
     fully_completed = 0
     partially_completed = 0
@@ -92,13 +99,20 @@ def category_list(request):
 def challenge_list(request, category_id):
     challenges = Challenge.objects.filter(category = category_id)
     team = getTeam(request)
-    details = calculateInformation(team)
+    details = calculateInformation(team, category_id)
     if team:
         for challenge in challenges:
             try:
                 requestMade = RequestsMade.objects.filter(team = team, challenge = challenge).order_by('-made_at')[:1].get()
-                challenge.status = requestMade.get_status_display()
+                challenge.points_status = str(requestMade.points_gained) + '/' + str(challenge.points_avaliable)
+                if challenge.points_avaliable == requestMade.points_gained:
+                    challenge.status = 'Completed'
+                elif requestMade.closed_by != None and requestMade.points_gained > 0:
+                    challenge.status = 'Partially completed'
+                else:
+                    challenge.status = requestMade.get_status_display()
             except RequestsMade.DoesNotExist:
+                challenge.points_status = '0/' + str(challenge.points_avaliable)
                 challenge.status = "Not attempted yet"
 
     context_dict={'challenge_array': challenges, 'details': details}
