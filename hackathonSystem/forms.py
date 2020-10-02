@@ -76,7 +76,14 @@ class createRequestForm(forms.ModelForm):
                 self.add_error('attachments', f._get_name() + ' too large. EachSize should not exceed 2 MB.')
 
         if RequestsMade.objects.filter(team=team, challenge = challenge, status = "request_made").exists():
-            self.add_error('challenge', 'You already have an open request for this question.  Please wait.')
+            self.add_error('challenge', 'You already have an open request for this challenge.  Please wait.')
+       
+        try:
+            request_made = RequestsMade.objects.filter(team = team, status = 'judged', challenge = challenge).order_by('-points_gained')[:1].get()
+            if challenge.points_avaliable == request_made.points_gained:
+                self.add_error('challenge', 'You have already been awarded the maximum amount of points for this challenge')
+        except RequestsMade.DoesNotExist:
+            pass
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
