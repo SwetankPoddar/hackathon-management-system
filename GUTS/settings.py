@@ -25,7 +25,7 @@ SECRET_KEY = 'im0%nd+m3w=%3olsd#i14ob$9b!+ppy1vxhvr@()o_fs$8n6l_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', 'code-olympics.gutechsoc.com', 'code-olympics-backup.gutechsoc.com']
 
 
 # Application definition
