@@ -10,23 +10,32 @@ Challenge List
 
 
 {% block body_block %}
-<div class="container text-center">
-  <table class="table sortable">
-      <tr>
-        <th>Number</th>
-        <th>Name</th>
-        <th>Max points</th>
-        {% if request.session.user_type == "team" %} <th>Status</th> {% endif %}
-      </tr>
-      {% for challenge in challenge_array %}
-        <tr>
-          <td><a href="{% url 'challenge_details' challenge.id %}">{{ challenge.id }}</a> </td>
-          <td>{{ challenge.name|title }} </td>
-          <td>{{ challenge.points_avaliable }} </td>
-          {% if request.session.user_type == "team" %} <td>{{ challenge.status }}</td> {% endif %}
-        </tr>
-      {% endfor %}
-  </table>
+
+
+
+
+  <div class="container">
+  <div class="row justify-content-center">
+  {% for challenge in challenge_array %}
+  <div class="col-lg-5  col-xs-5 p-4 text-white bg-theme-color rounded text-center m-1 category-item">
+    <h3><strong>{{ challenge.name|title }}<span class="badge text-theme-color bg-white rounded px-1 ml-2">{{ challenge.points_status }} pts</span></strong></h3>
+    {% if request.session.user_type == "team" %}
+    <p class="text-white-50">{{ challenge.status }}</p>
+    {% endif %}
+    <a href="{% url 'challenge_details' challenge.id %}" class="stretched-link text-decoration-none btn btn-block btn-outline-light mt-3">View</a>
+  </div>
+  {% endfor %}
+
+  {% if challenge_array.count|divisibleby:2 %}
+  {% else %}
+  <div class=" col-lg-5 col-xs-5 ">
+  </div>
+  {% endif %}
+
 </div>
+</div>
+
+
+
 
 {% endblock %}

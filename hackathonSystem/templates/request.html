@@ -11,53 +11,106 @@ Request #{{requestInfo.id}}
 
 {% block body_block %}
 
-<div class="container text-center">
 
-  <table class="table">
-      <tr>
-        <td>Challenge</td>
-        <td><a href="{% url 'challenge_details' requestInfo.challenge.id %}">{{ requestInfo.challenge }} </a></td>
-      </tr>
-      <tr>
-        <td>Points Avaliable</td>
-        <td>{{ requestInfo.challenge.points_avaliable }}</td>
-      </tr>
-      <tr>
-        <td>Made at</td>
-        <td>{{ requestInfo.made_at }}</td>
-      </tr>
-      <tr>
-        <td>Status</td>
-        <td><b>{{ requestInfo.get_status_display }}</b></td>
-      </tr>
-      <tr>
-        <td>Points Gained</td>
-        <td>
-            {% if requestInfo.status == "judged" %}
-            <b>{{ requestInfo.points_gained }}</b>
-            {% else %}
-            -
-            {% endif %}
-          </td>
-      </tr>
-      <tr>
-        <td>Notes</td>
-        <td>{% if requestInfo.notes %}
-          {{ requestInfo.notes }}
-          {% else %}
-          -
-          {% endif %}
-        </td>
-      </tr>
+<div class="container">
+
+
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <div class="h3-margin-bot"><span class="h3"><strong>Challenge</strong></span><span class="text-dark float-right  bg-white rounded p-2 px-3"><a href="{% url 'challenge_details' requestInfo.challenge.id %}">{{ requestInfo.challenge }} </a></span></div>
+</div>
+</div>
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <div class="h3-margin-bot"><span class="h3"><strong>Points Avaliable</strong></span><span class="text-dark float-right  bg-white rounded p-2 px-3">{{ requestInfo.challenge.points_avaliable }}</span></div>
+</div>
+</div>
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <div class="h3-margin-bot"><span class="h3"><strong>Made at</strong></span><span class="text-dark float-right  bg-white rounded p-2 px-3">{{ requestInfo.made_at }}</span></div>
+</div>
+</div>
+
+
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <div class="h3-margin-bot"><span class="h3"><strong>Status</strong></span><span class="text-dark float-right  bg-white rounded p-2 px-3">{{ requestInfo.get_status_display }}</span></div>
+</div>
+</div>
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <div class="h3-margin-bot"><span class="h3"><strong>Points Gained</strong></span>
+    <span class="text-dark float-right  bg-white rounded p-2 px-3">
       {% if requestInfo.status == "judged" %}
-      <tr>
-        <td>Judged By</td>
-        <td>{{ requestInfo.closed_by.user.first_name|title }} {{ requestInfo.closed_by.user.last_name|title }}</td>
-      </tr>
+      <b>{{ requestInfo.points_gained }}</b>
+      {% else %}
+      -
       {% endif %}
-  </table>
+    </span>
+  </div>
+</div>
+</div>
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <div class="h3-margin-bot"><span class="h3"><strong>Attachments</strong></span>
+    <span class="text-dark float-right  bg-white rounded p-2 px-3">
+      {% for attachment_entity in requestInfo.attachments.all %}
+      {{ forloop.counter }}. <a target='_blank' href='{{ attachment_entity.attachment.url }}'>{{ attachment_entity }}</a><br/>
+      {% endfor %}
+    </span>
+  </div>
+</div>
+</div>
+
+
+
+{% if requestInfo.status == "judged" %}
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+  <div class="h3-margin-bot"><span class="h3"><strong>Judged By</strong></span><span class="text-dark float-right  bg-white rounded p-2 px-3">{{ requestInfo.closed_by}}</span></div>
+</div>
+</div>
+
+{% endif %}
+
+
+<div class="row justify-content-center">
+<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-center m-1 category-item">
+  <h3 class="h3-margin-bot text-left pl-1"><strong>Notes</strong></h3>
+  <div class="bg-white text-dark p-2 m-1 text-break rounded">
+    {% if requestInfo.notes %}
+      {{ requestInfo.notes }}
+      {% else %}
+      -
+      {% endif %}
+  </div>
+</div>
+</div>
+
+
 
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 {% endblock %}

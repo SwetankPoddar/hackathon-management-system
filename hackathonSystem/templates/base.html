@@ -31,7 +31,7 @@
 	<body>
 
         <!--Navbar-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-light mb-5">
           <a class="navbar-brand" href="/">
 						<img src="{% static 'images/co-logo.jpg' %}" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
 						<strong>Hacker Olympics</strong>
@@ -44,7 +44,7 @@
             <ul class="navbar-nav mr-auto">
               {% if request.session.user_type %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'challenge_list' %}">
+                <a class="nav-link" href="{% url 'category_list' %}">
                   Challenges
                 </a>
               </li>
@@ -66,7 +66,7 @@
                 </a>
               </li>
               {% endif %}
-              {% if request.session.user_type == "admin" %}
+              {% if request.session.user_type == "judge" %}
 						  <li class="nav-item">
 							 <a class="nav-link" href="{% url 'teams' %}">
 								 Teams
@@ -87,6 +87,11 @@
                     Create New Challenge
                   </a>
                 </li>
+								<li class="nav-item">
+	                  <a class="nav-link" href="{% url 'create_category' %}">
+	                    Create New Category
+	                  </a>
+	               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'create_team' %}">
                   Create New Team
@@ -126,16 +131,27 @@
         <h3 class="text-center">{% block body_title %}{% endblock %}</h3>
         {% block body_block %}
         {% endblock %}
+
+
+
+				<footer class="footer">
+					<div class="container text-center">
+						<span class="text-muted">
+							All rights reserved by GUTS | Made with &#x2764; by <a href='http://www.swetankpoddar.me'>Swetank Poddar</a>
+						</span>
+					</div>
+				</footer>
+
+				{% block javascript %}
+				{% endblock %}
+
+				<script>
+				$(function() {
+					if ((location.pathname.split("/")[1]) !== ""){
+						$('nav a[href^="/' + location.pathname.split("/")[1] + '"]').addClass('active');
+					}
+				});
+				</script>
+
     </body>
-    <footer class="footer">
-      <div class="container text-center">
-        <span class="text-muted"> 
-          All rights reserved by GUTS | Made with &#x2764; by <a href='http://www.swetankpoddar.me'>Swetank Poddar</a>
-        </span>
-      </div>
-    </footer>
 </html>
-
-{% block javascript %}
-{% endblock %}
-

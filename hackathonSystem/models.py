@@ -1,44 +1,66 @@
 from django.db import models
 from datetime import datetime
 from django.contrib.auth.models import User
+import os
+from django.core.exceptions import ValidationError
 
-# User Model to include types
-class CustomUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    USER_TYPE_CHOICES = (
-      (1, 'team'),
-      (2, 'judge'),
-  )
-    user_type = models.PositiveSmallIntegerField(choices = USER_TYPE_CHOICES, default = USER_TYPE_CHOICES[0][0], blank = True)
+def file_size(value): # add this to some file where you can import it from
+    limit = 2 * 1024 * 1024
+    if value.size > limit:
+        raise ValidationError('File too large. Size should not exceed 2 MiB.')
 
-    def isAdmin(self):
-        return self.user_type == 2
+class Organisation(models.Model):
+    name = models.CharField(max_length = 60)
+
+    def __str__(self):
+        return self.name
+class Judge(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    organisation = models.ForeignKey(Organisation, on_delete=models.SET_NULL, null=True)
 
     def getType(self):
-        if (self.user_type == 1):
-            return "Team"
-        else:
-            return "Judge"
+        return "judge"
     
     def __str__(self):
-        return str(self.user.id) + ' - ' + self.getType()
+        return self.user.first_name + ' ' + self.user.last_name + ' from ' + str(self.organisation)
 
 # Team Model
 class Team(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
     name = models.CharField(max_length = 30)
     member_details = models.TextField(max_length = 350)
     hackerrank_accounts = models.TextField(max_length = 500)
 
+    def getType(self):
+        return "team"
+
+    def __str__(self):
+        return self.name + '(Team)'
+
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.CharField(max_length=150, null=True)
+    allowed_to_edit = models.ManyToManyField(Judge)
+    class Meta:
+        verbose_name_plural = 'Categories'
+
     def __str__(self):
         return self.name
+
+class Attachments(models.Model):
+    attachment =  models.FileField(upload_to='attachments/', validators=[file_size])
+    def __str__(self):
+        return os.path.basename(self.attachment.name)
 
 # Challenge Model
 class Challenge(models.Model):
     name = models.CharField(max_length = 50)
     points_avaliable = models.IntegerField()
     description = models.TextField(max_length = 350)
-
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    attachments = models.ManyToManyField(Attachments)
     def __str__(self):
         return self.name
 
@@ -53,6 +75,8 @@ class RequestsMade(models.Model):
 
     points_gained = models.IntegerField(default=0, blank= True)
 
+    attachments = models.ManyToManyField(Attachments)
+
     REQUEST_STATUS = (
         ('request_made', 'Request made'),
         ('judged', 'Judged'),
@@ -63,12 +87,11 @@ class RequestsMade(models.Model):
     made_at = models.DateTimeField(default = datetime.now, blank = True)
 
     notes = models.TextField(default='', blank = True, max_length = 250 )
- 
-    closed_by = models.ForeignKey(CustomUser, on_delete = models.SET_NULL, blank = True, null = True )
+
+    closed_by = models.ForeignKey(Judge, on_delete = models.SET_NULL, blank = True, null = True, default = None)
 
     def __str__(self):
         team_name = str(self.team)
         question_name = str(self.challenge)
         time = str(self.made_at)
         return team_name +' - '+ question_name +' - '+ time
-

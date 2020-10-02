@@ -15,11 +15,42 @@
 
   <div class="container mt-5">
   <div class="row justify-content-md-center">
-    <div class="col col-lg-">
-      <form method="POST" action="{{ form.action }}">
+    <div class="col col-lg{% if col_size %}-{{ col_size }}{% else %}{% endif %}">
+      <form method="POST" action="{{ form.action }}" enctype="multipart/form-data">
           {% csrf_token %}
 
           {% for field in form %}
+
+
+            {% if field.label == "Name" %}
+            <div class="row justify-content-md-center">
+              <div class="col col-sm-8">
+
+                <label>{{ field.label }}</label>
+                {{ field }}
+                  {% for error in field.errors %}
+                      <div class="alert alert-danger">
+                          <strong>{{ error|escape }}</strong>
+                      </div>
+                  {% endfor %}
+                  <br>
+              </div>
+
+
+            {% elif field.label == "Points avaliable" %}
+            <div class="col col-sm">
+
+              <label>{{ field.label }}</label>
+              {{ field }}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+                <br>
+            </div>
+          </div>
+          {% else %}
           <label>{{ field.label }}</label>
           {{ field }}
             {% for error in field.errors %}
@@ -28,6 +59,8 @@
                 </div>
             {% endfor %}
             <br>
+          {% endif %}
+
         {% endfor %}
         {% for error in form.non_field_errors %}
             <div class="alert alert-danger">
