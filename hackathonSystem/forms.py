@@ -76,7 +76,7 @@ class createRequestForm(forms.ModelForm):
                 self.add_error('attachments', f._get_name() + ' too large. EachSize should not exceed 2 MB.')
 
         if RequestsMade.objects.filter(team=team, challenge = challenge, status = "request_made").exists():
-            pass #self.add_error('challenge', 'You already have an open request for this question.  Please wait.')
+            self.add_error('challenge', 'You already have an open request for this question.  Please wait.')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
