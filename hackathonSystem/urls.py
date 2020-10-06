@@ -35,6 +35,9 @@ urlpatterns = [
     # Score card and team information (Admin Only)
     path('teams/', views.teams, name='teams'),
 
+    # Score card and team information category specific (Admin Only)
+    path('teams/<int:category_id>/', views.teams, name='teams'),
+
     # Create Team (Admin Only)
     path('create-team/', views.create_team, name="create_team"),
 

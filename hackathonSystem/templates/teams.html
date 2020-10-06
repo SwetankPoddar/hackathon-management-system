@@ -5,7 +5,7 @@ Teams
 {% endblock %}
 
 {% block body_title %}
-Teams
+Team results for {{ category_name }}
 {% endblock %}
 
 {% block body_block %}
@@ -34,6 +34,29 @@ Teams
       {% endfor %}
   </table>
 
+</div>
+
+<div class="container">
+<div class="row justify-content-center">
+  <div class="col-lg-5 col-xs-5 p-4 text-white bg-theme-color rounded text-center m-1 category-item">
+    <h3><strong>All Categories</strong></h3>
+    <a href="{% url 'teams' %}" class="stretched-link"></a>
+  </div>
+  {% for category in category_array %}
+  <div class="col-lg-5 col-xs-5 p-4 text-white bg-theme-color rounded text-center m-1 category-item">
+    <h3><strong>{{category.name}}</strong></h3>
+    <a href="{% url 'teams' category.id %}" class="stretched-link"></a>
+  </div>
+  {% endfor %}
+
+  <!-- this adds an empty column to balance out the display -->
+  {% if category_array.count|divisibleby:2|yesno:"False,True" %}
+  {% else %}
+  <div class=" col-lg-5 col-xs-5 ">
+  </div>
+  {% endif %}
+
+</div>
 </div>
 
 
