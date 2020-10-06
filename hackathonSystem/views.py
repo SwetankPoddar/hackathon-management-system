@@ -185,6 +185,12 @@ def teams(request):
     context_dict={'team_array':allTeams}
     return render(request, 'teams.html', context=context_dict)
 
+@user_passes_test(checkIfJudge)
+def hr_usernames(request):
+    allTeams = Team.objects.all()
+    context_dict={'team_array':allTeams}
+    return render(request, 'hr_usernames.html', context=context_dict)
+
 
 def logout_request(request):
     logout(request)

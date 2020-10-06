@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title_block %}
+Teams
+{% endblock %}
+
+{% block body_title %}
+HR Accounts
+{% endblock %}
+
+{% block body_block %}
+
+{% for team in team_array %}
+    {{ team.id }},{{ team.hackerrank_accounts }}<br>
+{% endfor %}
+
+{% endblock %}
