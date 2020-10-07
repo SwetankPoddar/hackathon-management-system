@@ -115,7 +115,7 @@ def challenge_list(request, category_id):
             except RequestsMade.DoesNotExist:
                 challenge.points_status = '0/' + str(challenge.points_avaliable)
                 challenge.status = "Not attempted yet"
-
+                
     context_dict={'challenge_array': challenges, 'details': details}
 
     return render(request, 'challenge_list.html', context=context_dict)
@@ -209,7 +209,9 @@ def login_request(request):
             user = authenticate(username = username, password = password)
             if user is not None:
                 login(request,user)
-    return redirect(reverse("index"))
+            else:
+                messages.error(request, 'Invalid')
+    return redirect("index")
 
 @login_required
 def request_details(request, request_id):

@@ -42,20 +42,8 @@ Request #{{requestInfo.id}}
 </div>
 </div>
 
-<div class="row justify-content-center">
-<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
-  <div class="h3-margin-bot"><span class="h3"><strong>Points Gained</strong></span>
-    <span class="text-dark float-right  bg-white rounded p-2 px-3">
-      {% if requestInfo.status == "judged" %}
-      <b>{{ requestInfo.points_gained }}</b>
-      {% else %}
-      -
-      {% endif %}
-    </span>
-  </div>
-</div>
-</div>
 
+{% if requestInfo.attachments.all.count > 0 %}
 <div class="row justify-content-center">
 <div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
   <div class="h3-margin-bot"><span class="h3"><strong>Attachments</strong></span>
@@ -67,10 +55,22 @@ Request #{{requestInfo.id}}
   </div>
 </div>
 </div>
+{% endif %}
 
+<div class="row justify-content-center">
+  <div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-center m-1 category-item">
+    <h3 class="h3-margin-bot text-left pl-1"><strong>Notes by you</strong></h3>
+    <div class="bg-white text-dark p-2 m-1 text-break rounded">
+      {% if requestInfo.notes %}
+        {{ requestInfo.notes }}
+        {% else %}
+        -
+        {% endif %}
+    </div>
+  </div>
+  </div>
 
-
-{% if requestInfo.status == "judged" %}
+{% if requestInfo.status == "judged" and request.session.user_type == "judge" %}
 
 <div class="row justify-content-center">
 <div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
@@ -80,20 +80,34 @@ Request #{{requestInfo.id}}
 
 {% endif %}
 
-
 <div class="row justify-content-center">
-<div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-center m-1 category-item">
-  <h3 class="h3-margin-bot text-left pl-1"><strong>Notes</strong></h3>
-  <div class="bg-white text-dark p-2 m-1 text-break rounded">
-    {% if requestInfo.notes %}
-      {{ requestInfo.notes }}
-      {% else %}
-      -
-      {% endif %}
+  <div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-left m-1 category-item">
+    <div class="h3-margin-bot"><span class="h3"><strong>Points Gained</strong></span>
+      <span class="text-dark float-right  bg-white rounded p-2 px-3">
+        {% if requestInfo.status == "judged" %}
+        <b>{{ requestInfo.points_gained }}</b>
+        {% else %}
+        -
+        {% endif %}
+      </span>
+    </div>
   </div>
-</div>
-</div>
+  </div>
 
+{% if requestInfo.status == "judged" %}
+<div class="row justify-content-center">
+  <div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-center m-1 category-item">
+    <h3 class="h3-margin-bot text-left pl-1"><strong>Comments by judge</strong></h3>
+    <div class="bg-white text-dark p-2 m-1 text-break rounded">
+      {% if requestInfo.comments_by_judge %}
+        {{ requestInfo.comments_by_judge }}
+        {% else %}
+        -
+        {% endif %}
+    </div>
+  </div>
+  </div>
+{% endif %}
 
 
 </div>
