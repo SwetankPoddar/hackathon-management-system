@@ -188,6 +188,9 @@ def teams(request):
 @user_passes_test(checkIfJudge)
 def hr_usernames(request):
     allTeams = Team.objects.all()
+    # remove whitespace
+    for team in allTeams:
+        team.hackerrank_accounts = "".join(team.hackerrank_accounts.split())
     context_dict={'team_array':allTeams}
     return render(request, 'hr_usernames.html', context=context_dict)
 
