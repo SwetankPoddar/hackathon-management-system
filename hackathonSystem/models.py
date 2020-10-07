@@ -27,9 +27,9 @@ class Judge(models.Model):
 # Team Model
 class Team(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
-    name = models.CharField(max_length = 30)
-    member_details = models.TextField(max_length = 350)
-    hackerrank_accounts = models.TextField(max_length = 500)
+    name = models.CharField(max_length = 30, verbose_name="Team name")
+    member_details = models.TextField(max_length = 350, verbose_name="Team member names and emails")
+    hackerrank_accounts = models.TextField(max_length = 500, verbose_name="Comma separated list of HackerRank usernames")
 
     def getType(self):
         return "team"

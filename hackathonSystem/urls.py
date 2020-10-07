@@ -35,6 +35,9 @@ urlpatterns = [
     # Score card and team information (Admin Only)
     path('teams/', views.teams, name='teams'),
 
+    # Get HackerRank usernames for all teams (Admin Only)
+    path('hr-usernames/', views.hr_usernames, name='hr_usernames'),
+
     # Create Team (Admin Only)
     path('create-team/', views.create_team, name="create_team"),
 
