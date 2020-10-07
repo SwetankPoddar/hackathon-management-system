@@ -129,6 +129,7 @@ class editTeamInformation(forms.ModelForm):
         addFormControlClass(self.visible_fields())
 
 
-class submitText(forms.Form):
+class submitHrParse(forms.Form):
     text = forms.CharField(widget=forms.Textarea, label='HR script output')
+    purge = forms.BooleanField(label='Purge existing HR attempts and recreate', required=False)
 
