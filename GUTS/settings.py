@@ -124,6 +124,8 @@ STATIC_ROOT = BASE_DIR / 'static'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# AWS S3 storage for media
+
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_ACCESS_KEY_ID = 'AKIAZ3AWK22ECSSGEYUT'
 AWS_SECRET_ACCESS_KEY = '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'
@@ -132,3 +134,7 @@ AWS_S3_SIGNATURE_VERSION = 's3v4'
 AWS_S3_REGION_NAME = 'eu-west-2'
 AWS_S3_ADDRESSING_STYLE = 'virtual'
 AWS_S3_FILE_OVERWRITE = False
+
+# Login redirection issue fix
+LOGIN_URL = '/login/'
+
