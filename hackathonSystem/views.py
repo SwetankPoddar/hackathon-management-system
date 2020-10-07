@@ -9,8 +9,9 @@ from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
-from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm
+from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm, submitText
 from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments
 
 ##### HELPER FUNCTIONS #####
@@ -344,3 +345,30 @@ def close_request(request, requestID):
         form = closeRequestForm(instance=requestInstance)
 
         return render(request, 'close_request.html', context={'form': form, 'requestDetails': requestInstance})
+
+@user_passes_test(checkIfJudge)
+def hr_input(request):
+    hrRequest = submitText(request.POST)
+
+    if request.method == 'POST':
+        if hrRequest.is_valid():
+            input_text = hrRequest.cleaned_data.get('text')
+            input_lines = input_text.splitlines()
+            if input_lines[0].split(",")[0] == 'HR_EXPORT':
+                RequestsMade.objects.filter(notes='<<< HackerRank AUTOMATED >>>').delete()
+                challenge_ar = input_lines[0].split(",")[1:]
+                for line in input_lines[1:]:
+                    line_array=line.strip().split(",")
+                    team_id = line_array[0]
+                    for challenge_id,result in zip(challenge_ar, line_array[1:]):
+                        RequestsMade.objects.create(
+                            team=Team.objects.filter(id=team_id).get(),
+                            challenge=Challenge.objects.filter(id=challenge_id).get(),
+                            points_gained=result,
+                            status='judged',
+                            notes='<<< HackerRank AUTOMATED >>>',
+                            made_at=timezone.now(),
+                        )
+
+    hrRequest.formFor = 'HackerRank parser'
+    return render(request, 'form_template.html', context={'form': hrRequest})

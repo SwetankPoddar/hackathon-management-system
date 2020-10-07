@@ -127,3 +127,8 @@ class editTeamInformation(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(editTeamInformation, self).__init__(*args, **kwargs)
         addFormControlClass(self.visible_fields())
+
+
+class submitText(forms.Form):
+    text = forms.CharField(widget=forms.Textarea, label='HR script output')
+
