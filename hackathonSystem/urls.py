@@ -58,5 +58,8 @@ urlpatterns = [
     path('edit-information/', views.edit_information, name="edit_information"),
 
     # See Team Information (Admin Only)
-    path('team-information/<int:user_id>/', views.team_information, name="team_information")
+    path('team-information/<int:user_id>/', views.team_information, name="team_information"),
+
+    # Input HR scrape results (Admin Only)
+    path('hr-input/', views.hr_input, name="hr-input"),
 ]
