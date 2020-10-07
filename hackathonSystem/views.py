@@ -209,6 +209,8 @@ def login_request(request):
             user = authenticate(username = username, password = password)
             if user is not None:
                 login(request,user)
+                return redirect(reverse("index"))
+        return render(request, 'index.html', context={'form': form})
     return redirect(reverse("index"))
 
 @login_required
