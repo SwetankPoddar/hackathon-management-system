@@ -61,7 +61,8 @@ class Challenge(models.Model):
     points_avaliable = models.IntegerField()
     description = models.TextField(max_length = 350)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    attachments = models.ManyToManyField(Attachments)
+    attachments = models.ManyToManyField(Attachments, blank=True)
+    hr_hosted = models.BooleanField(default=False)
     def __str__(self):
         return self.name
 
@@ -76,7 +77,7 @@ class RequestsMade(models.Model):
 
     points_gained = models.IntegerField(default=0, blank= True)
 
-    attachments = models.ManyToManyField(Attachments)
+    attachments = models.ManyToManyField(Attachments, blank=True)
 
     REQUEST_STATUS = (
         ('request_made', 'Request made'),
