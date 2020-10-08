@@ -3,6 +3,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 import os
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 def file_size(value): # add this to some file where you can import it from
     limit = 2 * 1024 * 1024
@@ -84,7 +85,7 @@ class RequestsMade(models.Model):
 
     status = models.CharField(max_length = 12,choices = REQUEST_STATUS, default = REQUEST_STATUS[0][0], blank = True)
 
-    made_at = models.DateTimeField(default = datetime.now, blank = True)
+    made_at = models.DateTimeField(default = timezone.now, blank = True)
 
     notes = models.TextField(default='', blank = True, max_length = 250 )
 

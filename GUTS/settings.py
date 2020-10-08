@@ -106,11 +106,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/London'
 
-USE_I18N = True
+USE_I18N = False
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
@@ -119,7 +119,22 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATIC_ROOT = BASE_DIR / 'static'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# AWS S3 storage for media
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_ACCESS_KEY_ID = 'AKIAZ3AWK22ECSSGEYUT'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'co2020-test'
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_S3_REGION_NAME = 'eu-west-2'
+AWS_S3_ADDRESSING_STYLE = 'virtual'
+AWS_S3_FILE_OVERWRITE = False
+
+# Login redirection issue fix
+LOGIN_URL = '/login/'
+
