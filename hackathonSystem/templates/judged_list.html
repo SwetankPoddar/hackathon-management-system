@@ -21,11 +21,12 @@ Judgment List
         <th>Time</th>
         <th>Points Awarded</th>
         <th>Status</th>
+        <th>View</th>
       </tr>
 
       {% for judgement in judgement_array %}
         <tr>
-          <td><a href="{% url 'request_details' judgement.id  %}">{{ judgement.id }}</a> </td>
+          <td>{{ judgement.id }}</td>
           <td>{{ judgement.team }} </td>
           <td><a href="{% url 'challenge_details' judgement.challenge.id %}">{{ judgement.challenge }}</a></td>
           <td>{{ judgement.made_at }} </td>
@@ -37,6 +38,7 @@ Judgment List
           {% endif %}
         </td>
           <td>{{ judgement.get_status_display }}</td>
+          <td><a href="{% url 'request_details' judgement.id  %}">View</a> </td>
         </tr>
       {% endfor %}
   </table>

@@ -37,9 +37,8 @@ Home
     </div>
     <div class="alert alert-info text-left" role="alert">
       <h5 class="alert-heading">Need help?</h5>
-      <p>Contact us at <a href="#">gutechsoc@gmail.com</a>
-        <br>
-        <b class='mt-5'>Don't forget to mention your team ID in the title</b>
+      <p>Contact <a href="mailto:gutechsoc@gmail.com?subject={% if user.is_authenticated %}{% if team %}Team ID: {{team.id}}{% endif %}{% endif %}">gutechsoc@gmail.com</a></p>
+        <b class='mt-5'>The subject of the email will be prefilled with the team ID, if not, please mention your team ID in the subject</b>
       </p>
     </div>
   {% else %}
@@ -71,7 +70,7 @@ Home
 
       <div class="alert alert-info text-left" style="margin-top:50px" role="alert">
         <h5 class="alert-heading">Trouble logging in?</h5>
-        <p>Contact <a href="#">gutechsoc@gmail.com</a></p>
+        <p>Contact <a href="mailto:gutechsoc@gmail.com">gutechsoc@gmail.com</a></p>
       </div>
     </div>
   </div>

@@ -115,7 +115,7 @@ def challenge_list(request, category_id):
             except RequestsMade.DoesNotExist:
                 challenge.points_status = '0/' + str(challenge.points_avaliable)
                 challenge.status = "Not attempted yet"
-
+                
     context_dict={'challenge_array': challenges, 'details': details}
 
     return render(request, 'challenge_list.html', context=context_dict)
