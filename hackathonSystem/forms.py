@@ -45,7 +45,7 @@ class createChallengeForm(forms.ModelForm):
     attachments = forms.FileField(widget=ClearableFileInput(attrs={'multiple': True}), required=False, label="Attachment (supports multiple)")
     class Meta:
         model = Challenge
-        fields = ('name','points_avaliable','category', 'hr_hosted','description')
+        fields = ('name','points_avaliable','category', 'hackerrank_hosted', 'description')
     def __init__(self, *args, **kwargs):
         self.judge = kwargs.pop('judge',None)
         super(createChallengeForm, self).__init__(*args, **kwargs)
@@ -81,7 +81,7 @@ class createRequestForm(forms.ModelForm):
             self.add_error('challenge', 'You already have an open request for this challenge.  Please wait.')
 
         # prevent HR challenge requests
-        if Challenge.objects.filter(name=challenge).values_list('hr_hosted').get()[0]:
+        if Challenge.objects.filter(name=challenge).values_list('hackerrank_hosted').get()[0]:
             self.add_error('challenge', 'This challenge is judged on HackerRank, you cannot make this request.')
 
         # prevent post deadline submissions
