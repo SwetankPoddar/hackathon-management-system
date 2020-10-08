@@ -82,7 +82,7 @@ class createRequestForm(forms.ModelForm):
 
         # prevent HR challenge requests
         if Challenge.objects.filter(name=challenge).values_list('hackerrank_hosted').get()[0]:
-            self.add_error('challenge', 'This challenge is judged on HackerRank, you cannot make this request.')
+            self.add_error('challenge', 'This challenge is automatically judged on HackerRank. The marks for this challenge will reflect on your account shortly.')
 
         # prevent post deadline submissions
         if CompetitionState.objects.filter(state = 'after').exists():
