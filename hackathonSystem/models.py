@@ -61,7 +61,7 @@ class Challenge(models.Model):
     points_avaliable = models.IntegerField()
     description = models.TextField(max_length = 350)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    attachments = models.ManyToManyField(Attachments)
+    attachments = models.ManyToManyField(Attachments, blank=True)
     def __str__(self):
         return self.name
 
