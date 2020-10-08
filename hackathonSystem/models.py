@@ -62,6 +62,7 @@ class Challenge(models.Model):
     description = models.TextField(max_length = 350)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     attachments = models.ManyToManyField(Attachments, blank=True)
+    hackerrank_hosted = models.BooleanField(default=False)
     def __str__(self):
         return self.name
 
@@ -76,7 +77,7 @@ class RequestsMade(models.Model):
 
     points_gained = models.IntegerField(default=0, blank= True)
 
-    attachments = models.ManyToManyField(Attachments)
+    attachments = models.ManyToManyField(Attachments, blank=True)
 
     REQUEST_STATUS = (
         ('request_made', 'Request made'),
@@ -97,3 +98,17 @@ class RequestsMade(models.Model):
         question_name = str(self.challenge)
         time = str(self.made_at)
         return team_name +' - '+ question_name +' - '+ time
+
+# Hack to regulate competition start/end
+class CompetitionState(models.Model):
+
+    STATE = (
+        ('before', 'Before'),
+        ('during', 'During'),
+        ('after', 'After'),
+    )
+
+    state = models.CharField(max_length=20, choices=STATE, default=STATE[0][0], blank=True)
+
+    def __str__(self):
+        return self.state

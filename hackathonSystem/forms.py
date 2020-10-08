@@ -3,7 +3,7 @@ from builtins import id
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import ClearableFileInput
-from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments
+from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments, CompetitionState
 from django.contrib.auth.models import User
 
 MAX_UPLOAD_FILE_SIZE = 2 * 1024 * 1024
@@ -45,7 +45,7 @@ class createChallengeForm(forms.ModelForm):
     attachments = forms.FileField(widget=ClearableFileInput(attrs={'multiple': True}), required=False, label="Attachment (supports multiple)")
     class Meta:
         model = Challenge
-        fields = ('name','points_avaliable','category','description')
+        fields = ('name','points_avaliable','category', 'hackerrank_hosted', 'description')
     def __init__(self, *args, **kwargs):
         self.judge = kwargs.pop('judge',None)
         super(createChallengeForm, self).__init__(*args, **kwargs)
@@ -81,9 +81,12 @@ class createRequestForm(forms.ModelForm):
             self.add_error('challenge', 'You already have an open request for this challenge.  Please wait.')
 
         # prevent HR challenge requests
-        challenge_description = Challenge.objects.filter(name=challenge).values_list("description").get()[0]
-        if "<<< HackerRank AUTOMATED >>>" in challenge_description:
-            self.add_error('challenge', 'This challenge is judged on HackerRank, you cannot make this request.')
+        if Challenge.objects.filter(name=challenge).values_list('hackerrank_hosted').get()[0]:
+            self.add_error('challenge', 'This challenge is automatically judged on HackerRank. The marks for this challenge will reflect on your account shortly.')
+
+        # prevent post deadline submissions
+        if CompetitionState.objects.filter(state = 'after').exists():
+            self.add_error(None, 'The competition is over, no more requests are being accepted.')
        
         try:
             request_made = RequestsMade.objects.filter(team = team, status = 'judged', challenge = challenge).order_by('-points_gained')[:1].get()
