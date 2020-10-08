@@ -59,7 +59,7 @@ class Attachments(models.Model):
 class Challenge(models.Model):
     name = models.CharField(max_length = 50)
     points_avaliable = models.IntegerField()
-    description = models.TextField(max_length = 350)
+    description = models.TextField(max_length = 500)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     attachments = models.ManyToManyField(Attachments, blank=True)
     hackerrank_hosted = models.BooleanField(default=False)
