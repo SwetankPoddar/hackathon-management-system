@@ -12,7 +12,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm, submitHrParse
-from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments
+from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments, CompetitionState
 
 ##### HELPER FUNCTIONS #####
 
@@ -62,6 +62,12 @@ def calculateInformation(team, category_id = None):
 def checkIfJudge(user):
     return not user.is_anonymous and Judge.objects.filter(user = user).exists()
 
+def blockBeforeCompetitionUnlessJudge(user):
+    return not user.is_anonymous and (
+        not CompetitionState.objects.filter(state = 'before').exists()
+        or Judge.objects.filter(user = user).exists()
+    )
+
 def sortTeamByPoints(teamWithInformation):
     return teamWithInformation.information.points
 
@@ -96,7 +102,7 @@ def category_list(request):
 
     return render(request, 'category_list.html', context=context_dict)
 
-@login_required
+@user_passes_test(blockBeforeCompetitionUnlessJudge)
 def challenge_list(request, category_id):
     challenges = Challenge.objects.filter(category = category_id)
     team = getTeam(request)
@@ -122,7 +128,7 @@ def challenge_list(request, category_id):
 
 
 
-@login_required
+@user_passes_test(blockBeforeCompetitionUnlessJudge)
 def challenge_details(request,challenge_id):
     challenge = Challenge.objects.get(id = challenge_id)
     team = getTeam(request)
@@ -257,7 +263,7 @@ def edit_information(request):
     return render(request, 'form_template.html', context={'form': teamInformation,'col_size':'8'})
 
 
-@login_required
+@user_passes_test(blockBeforeCompetitionUnlessJudge)
 def create_request(request):
     newRequest = createRequestForm(request.POST or None, request.FILES or None, request = request)
     if request.method == "POST" and newRequest.is_valid():
@@ -276,7 +282,7 @@ def create_request(request):
     return render(request, 'form_template.html', context={'form': newRequest})
 
 
-@login_required
+@user_passes_test(checkIfJudge)
 def create_category(request):
     newCategory = createCategoryForm(request.POST or None)
     if (request.method == 'POST'):
