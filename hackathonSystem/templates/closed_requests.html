@@ -18,14 +18,17 @@ Closed Requests
         <th>Submitted at</th>
         <th>Team Name (Number)</th>
         <th>Challenge</th>
+        <th>View</th>
         <th>Delete</th>
+
       </tr>
       {% for request in requests %}
         <tr>
-          <td><a href="{% url 'request_details' request.id %}">{{ request.id }}</a> </td>
+          <td>{{ request.id }}</td>
           <td>{{ request.made_at }} </td>
           <td>{{ request.team }} ({{ request.team.user.id }}) </td>
           <td><a href="{% url 'challenge_details' request.challenge.id %}">{{ request.challenge }}</a></td>
+          <td><a href="{% url 'request_details' request.id %}">View</a> </td>
           <td><a href="{% url 'delete_request' request.id %}">Delete</a></td>
         </tr>
       {% endfor %}

@@ -75,7 +75,7 @@ class createRequestForm(forms.ModelForm):
 
         for f in self.request.FILES.getlist('attachments'):
             if f.size > MAX_UPLOAD_FILE_SIZE:
-                self.add_error('attachments', f._get_name() + ' too large. EachSize should not exceed 2 MB.')
+                self.add_error('attachments', f._get_name() + ' too large. Each file should not exceed 2 MB.')
 
         if RequestsMade.objects.filter(team=team, challenge = challenge, status = "request_made").exists():
             self.add_error('challenge', 'You already have an open request for this challenge.  Please wait.')
@@ -105,8 +105,10 @@ class createRequestForm(forms.ModelForm):
 class closeRequestForm(forms.ModelForm):
     class Meta:
         model = RequestsMade
-        fields = ('points_gained',)
-
+        fields = ('points_gained', 'comments_by_judge')
+        widgets = {
+            'comments_by_judge': forms.Textarea
+        }
     def clean(self):
         data = self.cleaned_data
         points = data.get('points_gained')

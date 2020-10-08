@@ -75,9 +75,13 @@ WSGI_APPLICATION = 'GUTS.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+     'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'codeolympics',
+        'USER': 'postgres',
+        'PASSWORD': 'tRnc2lgOH9eJpqYTlKVx',
+        'HOST': 'co2020.cnppsqfavo3n.eu-west-2.rds.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
@@ -129,7 +133,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_ACCESS_KEY_ID = 'AKIAZ3AWK22ECSSGEYUT'
 AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'co2020-test'
+AWS_STORAGE_BUCKET_NAME = 'co2020-media'
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 AWS_S3_REGION_NAME = 'eu-west-2'
 AWS_S3_ADDRESSING_STYLE = 'virtual'
