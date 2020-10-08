@@ -1,3 +1,5 @@
+from builtins import id
+
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import ClearableFileInput
@@ -77,6 +79,11 @@ class createRequestForm(forms.ModelForm):
 
         if RequestsMade.objects.filter(team=team, challenge = challenge, status = "request_made").exists():
             self.add_error('challenge', 'You already have an open request for this challenge.  Please wait.')
+
+        # prevent HR challenge requests
+        challenge_description = Challenge.objects.filter(name=challenge).values_list("description").get()[0]
+        if "<<< HackerRank AUTOMATED >>>" in challenge_description:
+            self.add_error('challenge', 'This challenge is judged on HackerRank, you cannot make this request.')
        
         try:
             request_made = RequestsMade.objects.filter(team = team, status = 'judged', challenge = challenge).order_by('-points_gained')[:1].get()
@@ -131,6 +138,7 @@ class editTeamInformation(forms.ModelForm):
         addFormControlClass(self.visible_fields())
 
 
-class submitText(forms.Form):
+class submitHrParse(forms.Form):
     text = forms.CharField(widget=forms.Textarea, label='HR script output')
+    purge = forms.BooleanField(label='Purge existing HR attempts and recreate', required=False)
 

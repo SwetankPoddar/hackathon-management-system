@@ -11,7 +11,7 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm, submitText
+from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm, submitHrParse
 from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments
 
 ##### HELPER FUNCTIONS #####
@@ -209,9 +209,9 @@ def login_request(request):
             user = authenticate(username = username, password = password)
             if user is not None:
                 login(request,user)
-            else:
-                messages.error(request, 'Invalid')
-    return redirect("index")
+                return redirect(reverse("index"))
+        return render(request, 'index.html', context={'form': form})
+    return redirect(reverse("index"))
 
 @login_required
 def request_details(request, request_id):
@@ -359,27 +359,38 @@ def close_request(request, requestID):
 
 @user_passes_test(checkIfJudge)
 def hr_input(request):
-    hrRequest = submitText(request.POST)
+    hrRequest = submitHrParse(request.POST)
 
     if request.method == 'POST':
         if hrRequest.is_valid():
             input_text = hrRequest.cleaned_data.get('text')
             input_lines = input_text.splitlines()
             if input_lines[0].split(",")[0] == 'HR_EXPORT':
-                RequestsMade.objects.filter(notes='<<< HackerRank AUTOMATED >>>').delete()
+                purge_mode = hrRequest.cleaned_data.get('purge')
+                if purge_mode:
+                    RequestsMade.objects.filter(notes='<<< HackerRank AUTOMATED >>>').delete()
                 challenge_ar = input_lines[0].split(",")[1:]
                 for line in input_lines[1:]:
                     line_array=line.strip().split(",")
                     team_id = line_array[0]
                     for challenge_id,result in zip(challenge_ar, line_array[1:]):
-                        RequestsMade.objects.create(
-                            team=Team.objects.filter(id=team_id).get(),
-                            challenge=Challenge.objects.filter(id=challenge_id).get(),
-                            points_gained=result,
-                            status='judged',
-                            notes='<<< HackerRank AUTOMATED >>>',
-                            made_at=timezone.now(),
-                        )
+                        if purge_mode:
+                            RequestsMade.objects.create(
+                                team=Team.objects.filter(id=team_id).get(),
+                                challenge=Challenge.objects.filter(id=challenge_id).get(),
+                                points_gained=result,
+                                status='judged',
+                                notes='<<< HackerRank AUTOMATED >>>',
+                                made_at=timezone.now(),
+                            )
+                        else:
+                            RequestsMade.objects.filter(
+                                team=team_id,
+                                challenge=challenge_id
+                            ).update(
+                                points_gained=result,
+                                made_at=timezone.now(),
+                            )
 
     hrRequest.formFor = 'HackerRank parser'
     return render(request, 'form_template.html', context={'form': hrRequest})
