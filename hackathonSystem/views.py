@@ -104,7 +104,7 @@ def category_list(request):
 
 @user_passes_test(blockBeforeCompetitionUnlessJudge)
 def challenge_list(request, category_id):
-    challenges = Challenge.objects.filter(category = category_id)
+    challenges = Challenge.objects.filter(category = category_id).order_by('points_avaliable')
     team = getTeam(request)
     details = calculateInformation(team, category_id)
     if team:
