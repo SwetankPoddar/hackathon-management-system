@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Challenge, RequestsMade, Team, Organisation, Judge, Category, Attachments
+from .models import Challenge, RequestsMade, Team, Organisation, Judge, Category, Attachments, CompetitionState
 
 # Register your models here.
 admin.site.register(Challenge)
@@ -9,3 +9,4 @@ admin.site.register(Organisation)
 admin.site.register(Judge)
 admin.site.register(Category)
 admin.site.register(Attachments)
+admin.site.register(CompetitionState)

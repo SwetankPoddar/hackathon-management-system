@@ -1,7 +1,9 @@
+from builtins import id
+
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import ClearableFileInput
-from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments
+from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments, CompetitionState
 from django.contrib.auth.models import User
 
 MAX_UPLOAD_FILE_SIZE = 2 * 1024 * 1024
@@ -43,7 +45,7 @@ class createChallengeForm(forms.ModelForm):
     attachments = forms.FileField(widget=ClearableFileInput(attrs={'multiple': True}), required=False, label="Attachment (supports multiple)")
     class Meta:
         model = Challenge
-        fields = ('name','points_avaliable','category','description')
+        fields = ('name','points_avaliable','category', 'hackerrank_hosted', 'description')
     def __init__(self, *args, **kwargs):
         self.judge = kwargs.pop('judge',None)
         super(createChallengeForm, self).__init__(*args, **kwargs)
@@ -73,10 +75,18 @@ class createRequestForm(forms.ModelForm):
 
         for f in self.request.FILES.getlist('attachments'):
             if f.size > MAX_UPLOAD_FILE_SIZE:
-                self.add_error('attachments', f._get_name() + ' too large. EachSize should not exceed 2 MB.')
+                self.add_error('attachments', f._get_name() + ' too large. Each file should not exceed 2 MB.')
 
         if RequestsMade.objects.filter(team=team, challenge = challenge, status = "request_made").exists():
             self.add_error('challenge', 'You already have an open request for this challenge.  Please wait.')
+
+        # prevent HR challenge requests
+        if Challenge.objects.filter(name=challenge).values_list('hackerrank_hosted').get()[0]:
+            self.add_error('challenge', 'This challenge is automatically judged on HackerRank. The marks for this challenge will reflect on your account shortly.')
+
+        # prevent post deadline submissions
+        if CompetitionState.objects.filter(state = 'after').exists():
+            self.add_error(None, 'The competition is over, no more requests are being accepted.')
        
         try:
             request_made = RequestsMade.objects.filter(team = team, status = 'judged', challenge = challenge).order_by('-points_gained')[:1].get()
@@ -95,8 +105,10 @@ class createRequestForm(forms.ModelForm):
 class closeRequestForm(forms.ModelForm):
     class Meta:
         model = RequestsMade
-        fields = ('points_gained',)
-
+        fields = ('points_gained', 'comments_by_judge')
+        widgets = {
+            'comments_by_judge': forms.Textarea
+        }
     def clean(self):
         data = self.cleaned_data
         points = data.get('points_gained')
@@ -127,3 +139,9 @@ class editTeamInformation(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(editTeamInformation, self).__init__(*args, **kwargs)
         addFormControlClass(self.visible_fields())
+
+
+class submitHrParse(forms.Form):
+    text = forms.CharField(widget=forms.Textarea, label='HR script output')
+    purge = forms.BooleanField(label='Purge existing HR attempts and recreate', required=False)
+

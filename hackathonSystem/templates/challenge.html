@@ -76,10 +76,10 @@ Challenge - {{ challenge.name }}
 <div class="row justify-content-center">
 <div class="col-lg-7  col-xs-7 p-1 text-white bg-theme-color rounded text-center m-1 category-item">
   <h3 class="h3-margin-bot text-left pl-1"><strong>Detailed Description</strong></h3>
-  <div class="bg-white text-dark p-2 m-1 text-break rounded">{{ challenge.description }}</div>
+  <div class="bg-white text-dark p-2 m-1 text-left text-break rounded">{{ challenge.description | safe | linebreaks  }}</div>
 </div>
 </div>
-{% if challenge.points_avaliable != points_gained  %} 
+{% if request.session.user_type == "team" and challenge.points_avaliable != points_gained  %}
   <div class="row justify-content-center mt-3">
     <a href="{% url 'create_request' %}?challenge_id={{ challenge.id }}"><button type="button" class="btn btn-success btn-lg">Submit a judging request</button></a>
   </div>

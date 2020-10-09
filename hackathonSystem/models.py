@@ -3,6 +3,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 import os
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 def file_size(value): # add this to some file where you can import it from
     limit = 2 * 1024 * 1024
@@ -27,9 +28,9 @@ class Judge(models.Model):
 # Team Model
 class Team(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
-    name = models.CharField(max_length = 30)
-    member_details = models.TextField(max_length = 350)
-    hackerrank_accounts = models.TextField(max_length = 500)
+    name = models.CharField(max_length = 30, verbose_name="Team name")
+    member_details = models.TextField(max_length = 350, verbose_name="Team member names and emails")
+    hackerrank_accounts = models.TextField(max_length = 500, verbose_name="Comma separated list of HackerRank usernames")
 
     def getType(self):
         return "team"
@@ -58,9 +59,10 @@ class Attachments(models.Model):
 class Challenge(models.Model):
     name = models.CharField(max_length = 50)
     points_avaliable = models.IntegerField()
-    description = models.TextField(max_length = 350)
+    description = models.TextField(max_length = 1000)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    attachments = models.ManyToManyField(Attachments)
+    attachments = models.ManyToManyField(Attachments, blank=True)
+    hackerrank_hosted = models.BooleanField(default=False)
     def __str__(self):
         return self.name
 
@@ -75,7 +77,7 @@ class RequestsMade(models.Model):
 
     points_gained = models.IntegerField(default=0, blank= True)
 
-    attachments = models.ManyToManyField(Attachments)
+    attachments = models.ManyToManyField(Attachments, blank=True)
 
     REQUEST_STATUS = (
         ('request_made', 'Request made'),
@@ -84,14 +86,29 @@ class RequestsMade(models.Model):
 
     status = models.CharField(max_length = 12,choices = REQUEST_STATUS, default = REQUEST_STATUS[0][0], blank = True)
 
-    made_at = models.DateTimeField(default = datetime.now, blank = True)
+    made_at = models.DateTimeField(default = timezone.now, blank = True)
 
     notes = models.TextField(default='', blank = True, max_length = 250 )
 
     closed_by = models.ForeignKey(Judge, on_delete = models.SET_NULL, blank = True, null = True, default = None)
 
+    comments_by_judge =  models.CharField(max_length = 200, blank = True,  default = None, null = True)
     def __str__(self):
         team_name = str(self.team)
         question_name = str(self.challenge)
         time = str(self.made_at)
         return team_name +' - '+ question_name +' - '+ time
+
+# Hack to regulate competition start/end
+class CompetitionState(models.Model):
+
+    STATE = (
+        ('before', 'Before'),
+        ('during', 'During'),
+        ('after', 'After'),
+    )
+
+    state = models.CharField(max_length=20, choices=STATE, default=STATE[0][0], blank=True)
+
+    def __str__(self):
+        return self.state

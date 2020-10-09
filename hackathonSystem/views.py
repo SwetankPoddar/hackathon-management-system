@@ -9,9 +9,10 @@ from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
-from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm
-from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments
+from .forms import createChallengeForm, createRequestForm, createTeamForm, closeRequestForm, customAuthenticationForm, editTeamInformation, createCategoryForm, submitHrParse
+from .models import Challenge, RequestsMade, Team, Judge, Category, Attachments, CompetitionState
 
 ##### HELPER FUNCTIONS #####
 
@@ -61,6 +62,12 @@ def calculateInformation(team, category_id = None):
 def checkIfJudge(user):
     return not user.is_anonymous and Judge.objects.filter(user = user).exists()
 
+def blockBeforeCompetitionUnlessJudge(user):
+    return not user.is_anonymous and (
+        not CompetitionState.objects.filter(state = 'before').exists()
+        or Judge.objects.filter(user = user).exists()
+    )
+
 def sortTeamByPoints(teamWithInformation):
     return teamWithInformation.information.points
 
@@ -95,9 +102,9 @@ def category_list(request):
 
     return render(request, 'category_list.html', context=context_dict)
 
-@login_required
+@user_passes_test(blockBeforeCompetitionUnlessJudge)
 def challenge_list(request, category_id):
-    challenges = Challenge.objects.filter(category = category_id)
+    challenges = Challenge.objects.filter(category = category_id).order_by('points_avaliable')
     team = getTeam(request)
     details = calculateInformation(team, category_id)
     if team:
@@ -114,14 +121,14 @@ def challenge_list(request, category_id):
             except RequestsMade.DoesNotExist:
                 challenge.points_status = '0/' + str(challenge.points_avaliable)
                 challenge.status = "Not attempted yet"
-
+                
     context_dict={'challenge_array': challenges, 'details': details}
 
     return render(request, 'challenge_list.html', context=context_dict)
 
 
 
-@login_required
+@user_passes_test(blockBeforeCompetitionUnlessJudge)
 def challenge_details(request,challenge_id):
     challenge = Challenge.objects.get(id = challenge_id)
     team = getTeam(request)
@@ -188,6 +195,15 @@ def teams(request, category_id = None):
     context_dict={'team_array':allTeams,'category_name':category_name, 'category_array':category_array}
     return render(request, 'teams.html', context=context_dict)
 
+@user_passes_test(checkIfJudge)
+def hr_usernames(request):
+    allTeams = Team.objects.all()
+    # remove whitespace
+    for team in allTeams:
+        team.hackerrank_accounts = "".join(team.hackerrank_accounts.split())
+    context_dict={'team_array':allTeams}
+    return render(request, 'hr_usernames.html', context=context_dict)
+
 
 def logout_request(request):
     logout(request)
@@ -202,6 +218,8 @@ def login_request(request):
             user = authenticate(username = username, password = password)
             if user is not None:
                 login(request,user)
+                return redirect(reverse("index"))
+        return render(request, 'index.html', context={'form': form})
     return redirect(reverse("index"))
 
 @login_required
@@ -248,7 +266,7 @@ def edit_information(request):
     return render(request, 'form_template.html', context={'form': teamInformation,'col_size':'8'})
 
 
-@login_required
+@user_passes_test(blockBeforeCompetitionUnlessJudge)
 def create_request(request):
     newRequest = createRequestForm(request.POST or None, request.FILES or None, request = request)
     if request.method == "POST" and newRequest.is_valid():
@@ -267,7 +285,7 @@ def create_request(request):
     return render(request, 'form_template.html', context={'form': newRequest})
 
 
-@login_required
+@user_passes_test(checkIfJudge)
 def create_category(request):
     newCategory = createCategoryForm(request.POST or None)
     if (request.method == 'POST'):
@@ -347,3 +365,41 @@ def close_request(request, requestID):
         form = closeRequestForm(instance=requestInstance)
 
         return render(request, 'close_request.html', context={'form': form, 'requestDetails': requestInstance})
+
+@user_passes_test(checkIfJudge)
+def hr_input(request):
+    hrRequest = submitHrParse(request.POST)
+
+    if request.method == 'POST':
+        if hrRequest.is_valid():
+            input_text = hrRequest.cleaned_data.get('text')
+            input_lines = input_text.splitlines()
+            if input_lines[0].split(",")[0] == 'HR_EXPORT':
+                purge_mode = hrRequest.cleaned_data.get('purge')
+                if purge_mode:
+                    RequestsMade.objects.filter(notes='<<< HackerRank AUTOMATED >>>').delete()
+                challenge_ar = input_lines[0].split(",")[1:]
+                for line in input_lines[1:]:
+                    line_array=line.strip().split(",")
+                    team_id = line_array[0]
+                    for challenge_id,result in zip(challenge_ar, line_array[1:]):
+                        if purge_mode:
+                            RequestsMade.objects.create(
+                                team=Team.objects.filter(id=team_id).get(),
+                                challenge=Challenge.objects.filter(id=challenge_id).get(),
+                                points_gained=result,
+                                status='judged',
+                                notes='<<< HackerRank AUTOMATED >>>',
+                                made_at=timezone.now(),
+                            )
+                        else:
+                            RequestsMade.objects.filter(
+                                team=team_id,
+                                challenge=challenge_id
+                            ).update(
+                                points_gained=result,
+                                made_at=timezone.now(),
+                            )
+
+    hrRequest.formFor = 'HackerRank parser'
+    return render(request, 'form_template.html', context={'form': hrRequest})

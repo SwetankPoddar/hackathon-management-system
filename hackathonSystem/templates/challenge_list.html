@@ -18,7 +18,7 @@ Challenge List
   <div class="row justify-content-center">
   {% for challenge in challenge_array %}
   <div class="col-lg-5  col-xs-5 p-4 text-white bg-theme-color rounded text-center m-1 category-item">
-    <h3><strong>{{ challenge.name|title }}<span class="badge text-theme-color bg-white rounded px-1 ml-2">{{ challenge.points_status }} pts</span></strong></h3>
+    <h3><strong>{{ challenge.name|title }}<span class="badge text-theme-color bg-white rounded px-1 ml-2">{% if request.session.user_type == "team" %} {{ challenge.points_status }} {% else %} {{challenge.points_avaliable}} {% endif %} pts</span></strong></h3>
     {% if request.session.user_type == "team" %}
     <p class="text-white-50">{{ challenge.status }}</p>
     {% endif %}
