@@ -181,15 +181,18 @@ def request_list(request):
     return render(request, 'request_list.html', context=context_dict)
 
 @user_passes_test(checkIfJudge)
-def teams(request):
+def teams(request, category_id = None):
     allTeams = Team.objects.all()
 
     for team in allTeams:
-        team.information = calculateInformation(team)
+        team.information = calculateInformation(team, category_id=category_id)
 
     #allTeams.sort(key = sortTeamByPoints)
 
-    context_dict={'team_array':allTeams}
+    category_name = Category.objects.filter(id=category_id).get() if category_id else 'All Categories'
+    category_array = Category.objects.all()
+
+    context_dict={'team_array':allTeams,'category_name':category_name, 'category_array':category_array}
     return render(request, 'teams.html', context=context_dict)
 
 @user_passes_test(checkIfJudge)
