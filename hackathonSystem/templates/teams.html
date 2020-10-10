@@ -12,7 +12,12 @@ Team results for {{ category_name }}
 
 
 <div class="container text-center">
-
+<select id='redirect' class='form-control mt-3 mb-3'>
+  <option value="{% url 'teams' %}">All categories</option>
+  {% for category in category_array %}
+    <option {% if category.selected %} {{category.selected}} {% endif %} value="{% url 'teams' category.id %}">{{category.name}}</option>
+  {% endfor %}
+</select>
   <table class="table sortable">
     <tr>
       <th>Team Number</th>
@@ -35,29 +40,4 @@ Team results for {{ category_name }}
   </table>
 
 </div>
-
-<div class="container">
-<div class="row justify-content-center">
-  <div class="col-lg-5 col-xs-5 p-4 text-white bg-theme-color rounded text-center m-1 category-item">
-    <h3><strong>All Categories</strong></h3>
-    <a href="{% url 'teams' %}" class="stretched-link"></a>
-  </div>
-  {% for category in category_array %}
-  <div class="col-lg-5 col-xs-5 p-4 text-white bg-theme-color rounded text-center m-1 category-item">
-    <h3><strong>{{category.name}}</strong></h3>
-    <a href="{% url 'teams' category.id %}" class="stretched-link"></a>
-  </div>
-  {% endfor %}
-
-  <!-- this adds an empty column to balance out the display -->
-  {% if category_array.count|divisibleby:2|yesno:"False,True" %}
-  {% else %}
-  <div class=" col-lg-5 col-xs-5 ">
-  </div>
-  {% endif %}
-
-</div>
-</div>
-
-
 {% endblock %}

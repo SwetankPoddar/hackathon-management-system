@@ -192,6 +192,13 @@ def teams(request, category_id = None):
     category_name = Category.objects.filter(id=category_id).get() if category_id else 'All Categories'
     category_array = Category.objects.all()
 
+    if(category_id != None):
+        for category in category_array:
+            if category.id == category_id:
+                category.selected = 'selected'
+            else: 
+                category.selected = ''
+
     context_dict={'team_array':allTeams,'category_name':category_name, 'category_array':category_array}
     return render(request, 'teams.html', context=context_dict)
 
