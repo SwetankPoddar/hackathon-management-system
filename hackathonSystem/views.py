@@ -383,7 +383,8 @@ def hr_input(request):
             input_text = hrRequest.cleaned_data.get('text')
             input_lines = input_text.splitlines()
             if input_lines[0].split(",")[0] == 'HR_EXPORT':
-                purge_mode = hrRequest.cleaned_data.get('purge')
+                # purge_mode = hrRequest.cleaned_data.get('purge')
+                purge_mode = True
                 if purge_mode:
                     RequestsMade.objects.filter(notes='<<< HackerRank AUTOMATED >>>').delete()
                 challenge_ar = input_lines[0].split(",")[1:]
@@ -392,14 +393,15 @@ def hr_input(request):
                     team_id = line_array[0]
                     for challenge_id,result in zip(challenge_ar, line_array[1:]):
                         if purge_mode:
-                            RequestsMade.objects.create(
-                                team=Team.objects.filter(id=team_id).get(),
-                                challenge=Challenge.objects.filter(id=challenge_id).get(),
-                                points_gained=result,
-                                status='judged',
-                                notes='<<< HackerRank AUTOMATED >>>',
-                                made_at=timezone.now(),
-                            )
+                            if result!="0":
+                                RequestsMade.objects.create(
+                                    team=Team.objects.filter(id=team_id).get(),
+                                    challenge=Challenge.objects.filter(id=challenge_id).get(),
+                                    points_gained=result,
+                                    status='judged',
+                                    notes='<<< HackerRank AUTOMATED >>>',
+                                    made_at=timezone.now(),
+                                )
                         else:
                             RequestsMade.objects.filter(
                                 team=team_id,
