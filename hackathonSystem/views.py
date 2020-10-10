@@ -182,12 +182,12 @@ def request_list(request):
 
 @user_passes_test(checkIfJudge)
 def teams(request, category_id = None):
-    allTeams = Team.objects.all()
+    allTeams = Team.objects.all()[:1]
 
     for team in allTeams:
         team.information = calculateInformation(team, category_id=category_id)
 
-    allTeams = sorted(allTeams, key = sortTeamByPoints)
+    allTeams = sorted(allTeams, key = sortTeamByPoints, reverse=True)
 
     category_name = Category.objects.filter(id=category_id).get() if category_id else 'All Categories'
     judge = getJudge(request)
