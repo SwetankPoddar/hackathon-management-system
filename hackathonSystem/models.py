@@ -92,7 +92,7 @@ class RequestsMade(models.Model):
 
     closed_by = models.ForeignKey(Judge, on_delete = models.SET_NULL, blank = True, null = True, default = None)
 
-    comments_by_judge =  models.CharField(max_length = 200, blank = True,  default = None, null = True)
+    comments_by_judge =  models.CharField(max_length = 500, blank = True,  default = None, null = True)
     def __str__(self):
         team_name = str(self.team)
         question_name = str(self.challenge)

@@ -69,7 +69,7 @@ def blockBeforeCompetitionUnlessJudge(user):
     )
 
 def sortTeamByPoints(teamWithInformation):
-    return teamWithInformation.information.points
+    return teamWithInformation.information['points']
 
 
 #### VIEWS ####
@@ -187,7 +187,7 @@ def teams(request, category_id = None):
     for team in allTeams:
         team.information = calculateInformation(team, category_id=category_id)
 
-    allTeams.sort(key = sortTeamByPoints)
+    allTeams = sorted(allTeams, key = sortTeamByPoints)
 
     category_name = Category.objects.filter(id=category_id).get() if category_id else 'All Categories'
     judge = getJudge(request)
