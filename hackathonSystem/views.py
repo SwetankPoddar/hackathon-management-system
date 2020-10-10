@@ -190,7 +190,8 @@ def teams(request, category_id = None):
     #allTeams.sort(key = sortTeamByPoints)
 
     category_name = Category.objects.filter(id=category_id).get() if category_id else 'All Categories'
-    category_array = Category.objects.all()
+    judge = getJudge(request)
+    category_array = Category.objects.filter(allowed_to_edit__in=[judge]) 
 
     if(category_id != None):
         for category in category_array:
