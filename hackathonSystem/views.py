@@ -182,7 +182,7 @@ def request_list(request):
 
 @user_passes_test(checkIfJudge)
 def teams(request, category_id = None):
-    allTeams = Team.objects.all()[:1]
+    allTeams = Team.objects.all()
 
     for team in allTeams:
         team.information = calculateInformation(team, category_id=category_id)
