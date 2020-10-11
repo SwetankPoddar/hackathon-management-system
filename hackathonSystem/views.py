@@ -254,6 +254,15 @@ def closed_requests(request):
     return render(request, 'closed_requests.html',{'requests': closedRequests})
 
 @user_passes_test(checkIfJudge)
+def closed_requests_challenge(request, challenge_id):
+    closedRequests = RequestsMade.objects.filter(challenge=challenge_id).order_by('-made_at')
+    paginator = Paginator(closedRequests, 30)
+    page = request.GET.get('page')
+    closedRequests = paginator.get_page(page)
+    return render(request, 'closed_requests.html',{'requests': closedRequests})
+
+
+@user_passes_test(checkIfJudge)
 def team_information(request, user_id):
     team = Team.objects.get(user = User.objects.get(id = user_id))
     teamScore = calculateInformation(team)

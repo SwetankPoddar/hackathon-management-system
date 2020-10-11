@@ -57,6 +57,9 @@ urlpatterns = [
     # Closed Requests List (Admin Only)
     path('closed-requests/', views.closed_requests, name='closed_requests'),
 
+    # Closed Requests List (Admin Only)
+    path('closed-requests/<int:challenge_id>/', views.closed_requests_challenge, name='closed_requests_challenge'),
+
     # Delete Request (Admin Only)
     path('delete-request/<int:request_id>/', views.delete_request, name="delete_request"),
 
