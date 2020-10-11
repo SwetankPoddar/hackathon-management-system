@@ -255,7 +255,7 @@ def closed_requests(request):
 
 @user_passes_test(checkIfJudge)
 def closed_requests_challenge(request, challenge_id):
-    closedRequests = RequestsMade.objects.filter(challenge=challenge_id).order_by('-made_at')
+    closedRequests = RequestsMade.objects.filter(challenge=challenge_id, status = 'judged').order_by('-made_at')
     paginator = Paginator(closedRequests, 30)
     page = request.GET.get('page')
     closedRequests = paginator.get_page(page)
