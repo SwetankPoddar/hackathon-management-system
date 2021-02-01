@@ -1,11 +1,7 @@
-# Further improvements
+# Hackathon Management System 
 
-- Auto refresh open request page
-- Add a "i am going to that team" button in the requests
+Developed for Glasgow University Tech Society (GUTS). 
 
-- Add warning when wrong login credentials entered
-- Upgrade to current django version
-- Add upload functionality
-- Add tests and static analysis
-- Build a full CI
-- Typehints?
+This is a Django website which was designed to help GUTS manage their hackathons. It is capable of managing participants, questions, judges and their marking. The system was designed to be stateless in nature, i.e. this project does not maintain a state. Things like sessions, file management, database etc. were centralized to AWS services to ensure easy scalability. 
+
+PS: All the credentials visible in this application have been invalidated and exist just to give an example.
